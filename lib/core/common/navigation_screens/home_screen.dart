@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/palette.dart';
+import '../../models/user_model.dart';
+import '../../services/auth_service.dart';
 import '../utils/global.dart';
 
 class CustomerDashboardScreen extends StatelessWidget {
@@ -16,27 +18,33 @@ class CustomerDashboardScreen extends StatelessWidget {
     final double headerFontSize = w > 360 ? 18.0 : 16.0;
     final double cardImageSize = w > 360 ? 85.0 : 70.0;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.cardBackground,
-        elevation: 0,
-        title: Row(
-          children: [
-            const CircleAvatar(
-              radius: 18,
-              backgroundImage: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuD81MQIAtwCAvaToAvn-xAbD9vnTsjstD3VK49OjJPOeutnV9xNW7Je9xGKfYK_eppzMTCWDi2YI5DfJaJpFPs705YpWiM2l7Tw3JIRcCB54Y3Gw3w9ARJCdG_7WzD0pCczukdDur2WYNHBZODtStWM_iNTXgiV0-phK4C2aHjt_GYbJgruFNKzbzu2tyUsQBQA3nJfMcvOO6CIjVpM8HJfKmGA-DT9rcNT0RQCCOF0iIuLHMqsG3rS'),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return StreamBuilder<UserModel?>(
+      stream: AuthService().getUserData(),
+      builder: (context, snapshot) {
+        final user = snapshot.data;
+        final displayName = user?.fullName.split(' ').first ?? 'User';
+
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            backgroundColor: AppColors.cardBackground,
+            elevation: 0,
+            title: Row(
               children: [
-                Text('Good Morning,', style: GoogleFonts.poppins(fontSize: w > 360 ? 11 : 10, color: AppColors.textSecondary)),
-                Text('Rahul', style: GoogleFonts.poppins(fontSize: w > 360 ? 16 : 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                const CircleAvatar(
+                  radius: 18,
+                  backgroundImage: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuD81MQIAtwCAvaToAvn-xAbD9vnTsjstD3VK49OjJPOeutnV9xNW7Je9xGKfYK_eppzMTCWDi2YI5DfJaJpFPs705YpWiM2l7Tw3JIRcCB54Y3Gw3w9ARJCdG_7WzD0pCczukdDur2WYNHBZODtStWM_iNTXgiV0-phK4C2aHjt_GYbJgruFNKzbzu2tyUsQBQA3nJfMcvOO6CIjVpM8HJfKmGA-DT9rcNT0RQCCOF0iIuLHMqsG3rS'),
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Good Morning,', style: GoogleFonts.poppins(fontSize: w > 360 ? 11 : 10, color: AppColors.textSecondary)),
+                    Text(displayName, style: GoogleFonts.poppins(fontSize: w > 360 ? 16 : 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined, color: AppColors.textSecondary),
@@ -174,6 +182,8 @@ class CustomerDashboardScreen extends StatelessWidget {
       //   backgroundColor: AppColors.primary,
       //   child: const Icon(Icons.add, color: AppColors.textLight),
       // ),
+        );
+      },
     );
   }
 }
