@@ -14,9 +14,9 @@ class CustomerDashboardScreen extends StatelessWidget {
     initScreenSize(context);
 
     // Dynamic responsive dimensions using MediaQuery
-    final double horizontalPadding = w > 400 ? 20.0 : 14.0;
-    final double headerFontSize = w > 360 ? 18.0 : 16.0;
-    final double cardImageSize = w > 360 ? 85.0 : 70.0;
+    final double horizontalPadding = w * 0.05;
+    final double headerFontSize = w * 0.045;
+    final double cardImageSize = w * 0.2;
 
     return StreamBuilder<UserModel?>(
       stream: AuthService().getUserData(),
@@ -31,16 +31,16 @@ class CustomerDashboardScreen extends StatelessWidget {
             elevation: 0,
             title: Row(
               children: [
-                const CircleAvatar(
-                  radius: 18,
-                  backgroundImage: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuD81MQIAtwCAvaToAvn-xAbD9vnTsjstD3VK49OjJPOeutnV9xNW7Je9xGKfYK_eppzMTCWDi2YI5DfJaJpFPs705YpWiM2l7Tw3JIRcCB54Y3Gw3w9ARJCdG_7WzD0pCczukdDur2WYNHBZODtStWM_iNTXgiV0-phK4C2aHjt_GYbJgruFNKzbzu2tyUsQBQA3nJfMcvOO6CIjVpM8HJfKmGA-DT9rcNT0RQCCOF0iIuLHMqsG3rS'),
+                CircleAvatar(
+                  radius: w * 0.045,
+                  backgroundImage: const NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuD81MQIAtwCAvaToAvn-xAbD9vnTsjstD3VK49OjJPOeutnV9xNW7Je9xGKfYK_eppzMTCWDi2YI5DfJaJpFPs705YpWiM2l7Tw3JIRcCB54Y3Gw3w9ARJCdG_7WzD0pCczukdDur2WYNHBZODtStWM_iNTXgiV0-phK4C2aHjt_GYbJgruFNKzbzu2tyUsQBQA3nJfMcvOO6CIjVpM8HJfKmGA-DT9rcNT0RQCCOF0iIuLHMqsG3rS'),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: w * 0.025),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Good Morning,', style: GoogleFonts.poppins(fontSize: w > 360 ? 11 : 10, color: AppColors.textSecondary)),
-                    Text(displayName, style: GoogleFonts.poppins(fontSize: w > 360 ? 16 : 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                    Text('Good Morning,', style: GoogleFonts.poppins(fontSize: w * 0.027, color: AppColors.textSecondary)),
+                    Text(displayName, style: GoogleFonts.poppins(fontSize: w * 0.04, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
                   ],
                 ),
               ],
@@ -53,20 +53,20 @@ class CustomerDashboardScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: height * 0.02),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Responsive Search Bar
             TextField(
-              style: GoogleFonts.poppins(fontSize: w > 360 ? 13 : 12, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(fontSize: w * 0.032, color: AppColors.textPrimary),
               decoration: InputDecoration(
                 hintText: 'Search contractors, plans, or services...',
-                hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w > 360 ? 13 : 12),
+                hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w * 0.032),
                 prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
                 filled: true,
                 fillColor: AppColors.cardBackground,
-                contentPadding: EdgeInsets.symmetric(vertical: w > 360 ? 14 : 10, horizontal: 16),
+                contentPadding: EdgeInsets.symmetric(vertical: height * 0.0175, horizontal: w * 0.04),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: AppColors.borderLight),
@@ -90,20 +90,20 @@ class CustomerDashboardScreen extends StatelessWidget {
                 children: [
                   FilterChip(
                     selected: true,
-                    label: Text('Construction', style: GoogleFonts.poppins(color: AppColors.textLight, fontSize: w > 360 ? 12 : 11, fontWeight: FontWeight.bold)),
+                    label: Text('Construction', style: GoogleFonts.poppins(color: AppColors.textLight, fontSize: w * 0.027, fontWeight: FontWeight.bold)),
                     onSelected: (val) {},
                     selectedColor: AppColors.primary,
                     avatar: const Icon(Icons.construction, color: AppColors.textLight, size: 16),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: w * 0.02),
                   FilterChip(
-                    label: Text('Renovation', style: GoogleFonts.poppins(color: AppColors.textPrimary, fontSize: w > 360 ? 12 : 11)),
+                    label: Text('Renovation', style: GoogleFonts.poppins(color: AppColors.textPrimary, fontSize: w * 0.027)),
                     onSelected: (val) {},
                     backgroundColor: AppColors.cardBackground,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: w * 0.02),
                   FilterChip(
-                    label: Text('Interior', style: GoogleFonts.poppins(color: AppColors.textPrimary, fontSize: w > 360 ? 12 : 11)),
+                    label: Text('Interior', style: GoogleFonts.poppins(color: AppColors.textPrimary, fontSize: w * 0.027)),
                     onSelected: (val) {},
                     backgroundColor: AppColors.cardBackground,
                   ),
@@ -119,11 +119,11 @@ class CustomerDashboardScreen extends StatelessWidget {
                 Text('Top Rated Companies', style: GoogleFonts.poppins(fontSize: headerFontSize, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
                 TextButton(
                   onPressed: () {},
-                  child: Text('View All', style: GoogleFonts.poppins(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 12)),
+                  child: Text('View All', style: GoogleFonts.poppins(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: w * 0.03)),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: height * 0.01),
 
             // Responsive Card
             Card(
@@ -134,7 +134,7 @@ class CustomerDashboardScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Padding(
-                padding: EdgeInsets.all(w > 360 ? 14 : 10),
+                padding: EdgeInsets.all(w * 0.035),
                 child: Row(
                   children: [
                     ClipRRect(
@@ -146,25 +146,25 @@ class CustomerDashboardScreen extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: w * 0.03),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('BuildWell Constructions', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: w > 360 ? 15 : 13, color: AppColors.textPrimary)),
-                          const SizedBox(height: 4),
+                          Text('BuildWell Constructions', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: w * 0.0375, color: AppColors.textPrimary)),
+                          SizedBox(height: height * 0.005),
                           Row(
                             children: [
                               const Icon(Icons.star, color: AppColors.starRating, size: 16),
-                              Text(' 4.9 ', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
-                              Text('(124 reviews)', style: GoogleFonts.poppins(color: AppColors.textSecondary, fontSize: 12)),
+                              Text(' 4.9 ', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: w * 0.032, color: AppColors.textPrimary)),
+                              Text('(124 reviews)', style: GoogleFonts.poppins(color: AppColors.textSecondary, fontSize: w * 0.03)),
                             ],
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: height * 0.005),
                           Row(
                             children: [
                               const Icon(Icons.location_on, size: 14, color: AppColors.textSecondary),
-                              Text(' Kochi, Kerala', style: GoogleFonts.poppins(color: AppColors.textSecondary, fontSize: 12)),
+                              Text(' Kochi, Kerala', style: GoogleFonts.poppins(color: AppColors.textSecondary, fontSize: w * 0.03)),
                             ],
                           ),
                         ],

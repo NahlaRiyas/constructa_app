@@ -63,7 +63,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             // Header Skip Button using AppColors.primary & GoogleFonts.poppins
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: w * 0.06, vertical: height * 0.015),
               child: Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -88,7 +88,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 itemBuilder: (context, index) {
                   final data = _pages[index];
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: EdgeInsets.symmetric(horizontal: w * 0.06),
                     child: Column(
                       children: [
                         // Image Container
@@ -96,7 +96,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: Stack(
                             children: [
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(28),
+                                borderRadius: BorderRadius.circular(w * 0.07),
                                 child: Image.network(
                                   data.imageUrl,
                                   width: w,
@@ -105,11 +105,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 ),
                               ),
                               Positioned(
-                                bottom: 16,
-                                left: 16,
-                                right: 16,
+                                bottom: height * 0.02,
+                                left: w * 0.04,
+                                right: w * 0.04,
                                 child: Container(
-                                  padding: const EdgeInsets.all(12),
+                                  padding: EdgeInsets.all(w * 0.03),
                                   decoration: BoxDecoration(
                                     color: AppColors.cardBackground.withOpacity(0.9),
                                     borderRadius: BorderRadius.circular(16),
@@ -134,7 +134,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           Text(
                                             data.badgeTitle,
                                             style: GoogleFonts.poppins(
-                                              fontSize: w*0.023,
+                                              fontSize: w * 0.023,
                                               fontWeight: FontWeight.bold,
                                               color: AppColors.textSecondary,
                                             ),
@@ -142,7 +142,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           Text(
                                             data.badgeSubtitle,
                                             style: GoogleFonts.poppins(
-                                              fontSize: w*0.032,
+                                              fontSize: w * 0.032,
                                               fontWeight: FontWeight.bold,
                                               color: AppColors.textPrimary,
                                             ),
@@ -156,24 +156,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        SizedBox(height: height * 0.03),
                         // Title using AppColors.primary and GoogleFonts.poppins
                         Text(
                           data.title,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
-                            fontSize: 26,
+                            fontSize: w * 0.065,
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary,
                             height: 1.2,
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: height * 0.0125),
                         Text(
                           data.description,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
-                            fontSize: 14,
+                            fontSize: w * 0.035,
                             color: AppColors.textSecondary,
                           ),
                         ),
@@ -185,7 +185,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             // Footer Controls
             Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: EdgeInsets.all(w * 0.06),
               child: Column(
                 children: [
                   Row(
@@ -204,10 +204,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: height * 0.025),
                   SizedBox(
                     width: w,
-                    height: 52,
+                    height: height * 0.065,
                     child: ElevatedButton(
                       onPressed: _nextPage,
                       style: ElevatedButton.styleFrom(
@@ -223,7 +223,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         children: [
                           Text(
                             _currentPage == _pages.length - 1 ? 'Get Started' : 'Next',
-                            style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.poppins(fontSize: w * 0.04, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(width: 8),
                           const Icon(Icons.arrow_forward),

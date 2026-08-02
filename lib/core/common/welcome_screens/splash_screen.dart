@@ -77,8 +77,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       Transform.rotate(
                         angle: 0.1,
                         child: Container(
-                          width: 90,
-                          height: 90,
+                          width: w * 0.22,
+                          height: w * 0.22,
                           decoration: BoxDecoration(
                             color: AppColors.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(24),
@@ -86,8 +86,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         ),
                       ),
                       Container(
-                        width: 80,
-                        height: 80,
+                        width: w * 0.2,
+                        height: w * 0.2,
                         decoration: BoxDecoration(
                           color: AppColors.primary,
                           borderRadius: BorderRadius.circular(20),
@@ -99,42 +99,42 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                             )
                           ],
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.home_rounded,
                           color: AppColors.textLight,
-                          size: 48,
+                          size: w * 0.12,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: height * 0.04),
                   // App Title using Google Fonts Poppins and AppColors.primary
                   Text(
                     'Constructa',
                     style: GoogleFonts.poppins(
-                      fontSize: 40,
+                      fontSize: w * 0.1,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
                       letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: height * 0.01),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    padding: EdgeInsets.symmetric(horizontal: w * 0.1),
                     child: Text(
                       'Build your dream with trusted professionals',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
-                        fontSize: 16,
+                        fontSize: w * 0.04,
                         color: AppColors.textSecondary,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 48),
+                  SizedBox(height: height * 0.06),
                   // Loading Indicator Bar
                   SizedBox(
                     width: w * 0.45,
-                    height: 4,
+                    height: height * 0.005,
                     child: LinearProgressIndicator(
                       backgroundColor: AppColors.surfaceLight,
                       color: AppColors.primary,
@@ -146,14 +146,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             ),
           ),
           Positioned(
-            bottom: 48,
+            bottom: height * 0.06,
             left: 0,
             right: 0,
             child: Text(
               'PRECISION IN ARCHITECTURE',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
-                fontSize: 12,
+                fontSize: w * 0.03,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 2.0,
                 color: AppColors.textMuted,

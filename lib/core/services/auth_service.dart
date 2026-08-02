@@ -1,15 +1,31 @@
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../models/user_model.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // Get current user
   User? get currentUser => _auth.currentUser;
+
+  // Upload image to Firebase Storage
+  Future<String> uploadImage(File imageFile, String uid) async {
+    try {
+      Reference ref = _storage.ref().child('profile_images').child('$uid.jpg');
+      UploadTask uploadTask = ref.putFile(imageFile);
+      TaskSnapshot snapshot = await uploadTask;
+      return await snapshot.ref.getDownloadURL();
+    } catch (e) {
+      print("AuthService: Image upload error: $e");
+      return '';
+    }
+  }
 
   // Sign up with email and password
   Future<UserCredential?> signUp({
@@ -18,6 +34,7 @@ class AuthService {
     required String fullName,
     required String phoneNumber,
     required String role,
+    File? profileImage,
   }) async {
     try {
       print("AuthService: Attempting sign up for $email");
@@ -27,14 +44,19 @@ class AuthService {
       );
       print("AuthService: User created in Firebase Auth with UID: ${userCredential.user?.uid}");
 
-      // Save user info to Firestore
       if (userCredential.user != null) {
+        String imageUrl = '';
+        if (profileImage != null) {
+          imageUrl = await uploadImage(profileImage, userCredential.user!.uid);
+        }
+
         UserModel userModel = UserModel(
           uid: userCredential.user!.uid,
           email: email,
           fullName: fullName,
           phoneNumber: phoneNumber,
           role: role,
+          profileImageUrl: imageUrl,
         );
 
         print("AuthService: Writing user data to Firestore 'users' collection...");
@@ -46,8 +68,6 @@ class AuthService {
           print("AuthService: Successfully wrote user data to Firestore.");
         } catch (firestoreError) {
           print("AuthService: FAILED to write to Firestore: $firestoreError");
-          // Optionally delete the auth user if Firestore fails to keep them in sync
-          // await userCredential.user!.delete(); 
           throw Exception("Auth success, but Firestore failed: $firestoreError");
         }
       }
@@ -98,7 +118,8 @@ class AuthService {
             email: userCredential.user!.email ?? '',
             fullName: userCredential.user!.displayName ?? 'New User',
             phoneNumber: userCredential.user!.phoneNumber ?? '',
-            role: 'customer', // Default role for Google Sign-In
+            role: 'customer',
+            profileImageUrl: userCredential.user!.photoURL ?? '',
           );
 
           await _firestore.collection('users').doc(userCredential.user!.uid).set(userModel.toMap());

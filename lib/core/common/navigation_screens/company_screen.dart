@@ -11,8 +11,8 @@ class CompaniesScreen extends StatelessWidget {
     // Initialize MediaQuery metrics
     initScreenSize(context);
 
-    final double horizontalPadding = w > 400 ? 20.0 : 14.0;
-    final double titleFontSize = w > 360 ? 18.0 : 16.0;
+    final double horizontalPadding = w * 0.05;
+    final double titleFontSize = w * 0.045;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -31,20 +31,20 @@ class CompaniesScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: height * 0.02),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Responsive Search Bar
             TextField(
-              style: GoogleFonts.poppins(fontSize: w > 360 ? 13 : 12, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(fontSize: w * 0.032, color: AppColors.textPrimary),
               decoration: InputDecoration(
                 hintText: 'Search by company name, city or specialty...',
-                hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w > 360 ? 13 : 12),
+                hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w * 0.032),
                 prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
                 filled: true,
                 fillColor: AppColors.cardBackground,
-                contentPadding: EdgeInsets.symmetric(vertical: w > 360 ? 14 : 10, horizontal: 16),
+                contentPadding: EdgeInsets.symmetric(vertical: height * 0.0175, horizontal: w * 0.04),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: AppColors.borderLight),
@@ -64,9 +64,9 @@ class CompaniesScreen extends StatelessWidget {
             // Verified Builders Label
             Text(
               'Verified Builders & Contractors',
-              style: GoogleFonts.poppins(fontSize: w > 360 ? 16 : 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(fontSize: w * 0.04, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
             ),
-            const SizedBox(height: 12),
+             SizedBox(height: height*0.02),
 
             // Company Card Item 1
             _buildCompanyCard(
@@ -78,7 +78,7 @@ class CompaniesScreen extends StatelessWidget {
               location: 'Kochi, Kerala',
               imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCbQ1kXvkCTl9yw-Qrb-Ol27v1ConvBkc71WuHPWDfnLlYFMa0AZ_2733EiBV98BVYgSO2dXIYJDBj1uQL-rTYE0Zudt2dkSO_23XRGys8sOk5c8kllrHyFsPEIqGHNKNgsGG9c-Fq99dKciehGfXqO7KOlchpEYXf3kvXxmYbWOphH8IKxGBDzolCAn6zkWAe1WbzRtqZZnL7VHe5klHCVSYPaESrzB5DIuZqLaon5q1nDORm1fYPL',
             ),
-            const SizedBox(height: 14),
+             SizedBox(height: height*0.02),
 
             // Company Card Item 2
             _buildCompanyCard(
@@ -88,9 +88,9 @@ class CompaniesScreen extends StatelessWidget {
               rating: '4.8',
               reviews: '98',
               location: 'Trivandrum, Kerala',
-              imageUrl: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=500&auto=format&fit=crop&q=60',
+              imageUrl: 'https://images.jdmagicbox.com/comp/rajahmundry/k7/9999px883.x883.120421104741.d6k7/catalogue/apex-architects-and-engineers-danavaipeta-rajahmundry-architects-jrz17zfngj.jpg',
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: height*0.02),
 
             // Company Card Item 3
             _buildCompanyCard(
@@ -117,10 +117,10 @@ class CompaniesScreen extends StatelessWidget {
         required String location,
         required String imageUrl,
       }) {
-    final double cardImageSize = w > 360 ? 80.0 : 65.0;
+    final double cardImageSize = w * 0.2;
 
     return Container(
-      padding: EdgeInsets.all(w > 360 ? 14 : 10),
+      padding: EdgeInsets.all(w * 0.035),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(16),
@@ -144,26 +144,52 @@ class CompaniesScreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: w * 0.03),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   name,
-                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: w > 360 ? 14 : 13, color: AppColors.textPrimary),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: w * 0.035, color: AppColors.textPrimary),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: height * 0.0025),
                 Text(
                   specialty,
-                  style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(fontSize: w * 0.027, color: AppColors.textSecondary),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: height * 0.005),
                 Row(
                   children: [
-                    const Icon(Icons.star, color: AppColors.starRating, size: 15),
-                    Text(' $rating ', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.textPrimary)),
-                    Text('($reviews reviews)', style: GoogleFonts.poppins(color: AppColors.textSecondary, fontSize: 11)),
+                    Icon(Icons.location_on_outlined, color: AppColors.textSecondary, size: w * 0.035),
+                    SizedBox(width: w * 0.01),
+                    Expanded(
+                      child: Text(
+                        location,
+                        style: GoogleFonts.poppins(fontSize: w * 0.027, color: AppColors.textSecondary),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: height * 0.0075),
+                Row(
+                  children: [
+                    Icon(Icons.star, color: AppColors.starRating, size: w * 0.0375),
+                    Text(' $rating ', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: w * 0.03, color: AppColors.textPrimary)),
+                    Flexible(
+                      child: Text(
+                        '($reviews reviews)',
+                        style: GoogleFonts.poppins(color: AppColors.textSecondary, fontSize: w * 0.027),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ],
                 ),
               ],

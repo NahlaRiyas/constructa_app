@@ -72,8 +72,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 children: [
                   // Top Branding Icon Badge (Compass/Architecture)
                   Container(
-                    width: 56,
-                    height: 56,
+                    width: w * 0.14,
+                    height: w * 0.14,
                     decoration: BoxDecoration(
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(16),
@@ -85,38 +85,38 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       ],
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.architecture,
                       color: AppColors.textLight,
-                      size: 32,
+                      size: w * 0.08,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: height * 0.02),
 
                   // App Name Title
                   Text(
                     'Constructa',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
-                      fontSize: 22,
+                      fontSize: w * 0.055,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primary,
                       letterSpacing: -0.3,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: height * 0.015),
 
                   // Heading Title
                   Text(
                     'Forgot Password?',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
-                      fontSize: 18,
+                      fontSize: w * 0.045,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  SizedBox(height: height * 0.0075),
 
                   // Subtitle Description
                   Text(
@@ -125,12 +125,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         : 'Enter your email to receive a password reset link.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
-                      fontSize: 13,
+                      fontSize: w * 0.032,
                       color: AppColors.textSecondary,
                       height: 1.4,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: height * 0.025),
 
                   if (!_isSubmitted) ...[
                     // Email Input Field
@@ -139,33 +139,33 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       child: Text(
                         'Email Address',
                         style: GoogleFonts.poppins(
-                          fontSize: 12,
+                          fontSize: w * 0.03,
                           fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: height * 0.0075),
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textPrimary),
+                      style: GoogleFonts.poppins(fontSize: w * 0.032, color: AppColors.textPrimary),
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.mail_outline,
                           color: AppColors.textSecondary,
-                          size: 20,
+                          size: w * 0.05,
                         ),
                         hintText: 'name@company.com',
                         hintStyle: GoogleFonts.poppins(
                           color: AppColors.textMuted,
-                          fontSize: 13,
+                          fontSize: w * 0.032,
                         ),
                         filled: true,
                         fillColor: AppColors.surfaceLight,
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 16,
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: height * 0.015,
+                          horizontal: w * 0.04,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -181,12 +181,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: height * 0.025),
 
                     // Submit Button
                     SizedBox(
                       width: double.infinity,
-                      height: 48,
+                      height: height * 0.06,
                       child: ElevatedButton(
                         onPressed: _handleSubmit,
                         style: ElevatedButton.styleFrom(
@@ -203,12 +203,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             Text(
                               'Send Reset Link',
                               style: GoogleFonts.poppins(
-                                fontSize: 14,
+                                fontSize: w * 0.035,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.arrow_forward, size: 18),
+                            SizedBox(width: w * 0.02),
+                            Icon(Icons.arrow_forward, size: w * 0.045),
                           ],
                         ),
                       ),
@@ -216,7 +216,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ] else ...[
                     // Success Confirmation State
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: EdgeInsets.all(w * 0.03),
                       decoration: BoxDecoration(
                         color: AppColors.surfaceLight,
                         borderRadius: BorderRadius.circular(10),
@@ -224,13 +224,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.check_circle, color: AppColors.statusSuccess, size: 20),
-                          const SizedBox(width: 8),
+                          Icon(Icons.check_circle, color: AppColors.statusSuccess, size: w * 0.05),
+                          SizedBox(width: w * 0.02),
                           Expanded(
                             child: Text(
                               'Reset link sent successfully!',
                               style: GoogleFonts.poppins(
-                                fontSize: 12,
+                                fontSize: w * 0.03,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.statusSuccess,
                               ),
@@ -239,30 +239,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: height * 0.02),
                   ],
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: height * 0.025),
 
                   // Back to Login Button Link
                   InkWell(
                     onTap: () => Navigator.pushReplacementNamed(context, '/login'),
                     borderRadius: BorderRadius.circular(8),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
+                      padding: EdgeInsets.symmetric(vertical: height * 0.0075, horizontal: w * 0.03),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.arrow_back,
-                            size: 16,
+                            size: w * 0.04,
                             color: AppColors.secondary,
                           ),
-                          const SizedBox(width: 6),
+                          SizedBox(width: w * 0.015),
                           Text(
                             'Back to Login',
                             style: GoogleFonts.poppins(
-                              fontSize: 13,
+                              fontSize: w * 0.032,
                               fontWeight: FontWeight.bold,
                               color: AppColors.secondary,
                             ),
