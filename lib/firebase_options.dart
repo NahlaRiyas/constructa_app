@@ -53,10 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA9oDNXusBmnq183oMTIsNPcY1woaFliXI',
-    appId: '1:551761389838:android:c2abfd88726ef03d134f5f',
-    messagingSenderId: '551761389838',
-    projectId: 'mini-project-1ef7d',
-    storageBucket: 'mini-project-1ef7d.firebasestorage.app',
+    apiKey: 'AIzaSyBlsbW7peuLTNKnrtq8sXIC2Ka44jSxFkc',
+    appId: '1:309765575205:android:9a86e0c7e628ac79e1e5cc',
+    messagingSenderId: '309765575205',
+    projectId: 'constructa-app-36e5d',
+    storageBucket: 'constructa-app-36e5d.firebasestorage.app',
   );
 }

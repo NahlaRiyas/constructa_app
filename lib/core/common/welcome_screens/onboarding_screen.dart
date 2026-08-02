@@ -134,7 +134,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           Text(
                                             data.badgeTitle,
                                             style: GoogleFonts.poppins(
-                                              fontSize: 10,
+                                              fontSize: w*0.023,
                                               fontWeight: FontWeight.bold,
                                               color: AppColors.textSecondary,
                                             ),
@@ -142,7 +142,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                           Text(
                                             data.badgeSubtitle,
                                             style: GoogleFonts.poppins(
-                                              fontSize: 14,
+                                              fontSize: w*0.032,
                                               fontWeight: FontWeight.bold,
                                               color: AppColors.textPrimary,
                                             ),

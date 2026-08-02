@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/palette.dart';
+import '../../services/auth_service.dart';
 import '../utils/global.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -97,7 +98,12 @@ class ProfileScreen extends StatelessWidget {
               width: double.infinity,
               height: 48,
               child: OutlinedButton.icon(
-                onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+                onPressed: () async {
+                  await AuthService().signOut();
+                  if (context.mounted) {
+                    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+                  }
+                },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.statusDanger,
                   side: const BorderSide(color: AppColors.statusDanger),

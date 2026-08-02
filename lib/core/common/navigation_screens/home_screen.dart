@@ -169,11 +169,11 @@ class CustomerDashboardScreen extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: AppColors.textLight),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {},
+      //   backgroundColor: AppColors.primary,
+      //   child: const Icon(Icons.add, color: AppColors.textLight),
+      // ),
     );
   }
 }

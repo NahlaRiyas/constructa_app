@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "309765575205",
+    "project_id": "constructa-app-36e5d",
+    "storage_bucket": "constructa-app-36e5d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309765575205:android:9a86e0c7e628ac79e1e5cc",
+        "android_client_info": {
+          "package_name": "com.example.constructa_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "309765575205-aj4rt9tr6a9pbg6mdqti46v4t59qlh63.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.constructa_app",
+            "certificate_hash": "50982631c6ec9b80c44d80458009eb0f67375ff2"
+          }
+        },
+        {
+          "client_id": "309765575205-t5a4mkphtc4iaq3sj09c336l5t4e9d0m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlsbW7peuLTNKnrtq8sXIC2Ka44jSxFkc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "309765575205-t5a4mkphtc4iaq3sj09c336l5t4e9d0m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
