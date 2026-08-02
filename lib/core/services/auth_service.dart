@@ -20,10 +20,12 @@ class AuthService {
     required String role,
   }) async {
     try {
+      print("AuthService: Attempting sign up for $email");
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      print("AuthService: User created in Firebase Auth with UID: ${userCredential.user?.uid}");
 
       // Save user info to Firestore
       if (userCredential.user != null) {
@@ -35,11 +37,24 @@ class AuthService {
           role: role,
         );
 
-        await _firestore.collection('users').doc(userCredential.user!.uid).set(userModel.toMap());
+        print("AuthService: Writing user data to Firestore 'users' collection...");
+        try {
+          await _firestore
+              .collection('users')
+              .doc(userCredential.user!.uid)
+              .set(userModel.toMap());
+          print("AuthService: Successfully wrote user data to Firestore.");
+        } catch (firestoreError) {
+          print("AuthService: FAILED to write to Firestore: $firestoreError");
+          // Optionally delete the auth user if Firestore fails to keep them in sync
+          // await userCredential.user!.delete(); 
+          throw Exception("Auth success, but Firestore failed: $firestoreError");
+        }
       }
 
       return userCredential;
     } catch (e) {
+      print("AuthService: General error in signUp: $e");
       rethrow;
     }
   }
