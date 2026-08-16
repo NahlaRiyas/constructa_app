@@ -143,6 +143,11 @@ class AuthService {
     await _auth.sendPasswordResetEmail(email: email);
   }
 
+  // Update user role (e.g. switch to constructor)
+  Future<void> updateUserRole(String uid, String role) async {
+    await _firestore.collection('users').doc(uid).update({'role': role});
+  }
+
   // Get user data from Firestore
   Stream<UserModel?> getUserData() {
     User? user = _auth.currentUser;

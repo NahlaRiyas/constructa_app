@@ -32,7 +32,7 @@ class UserModel {
       email: map['email'] ?? '',
       fullName: map['fullName'] ?? '',
       phoneNumber: map['phoneNumber'] ?? '',
-      role: map['role'] ?? '',
+      role: map['role'] ?? 'customer',
       profileImageUrl: map['profileImageUrl'] ?? '',
     );
   }

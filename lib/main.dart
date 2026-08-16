@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'core/common/authentication_screens/forgot_password.dart';
-import 'core/common/authentication_screens/login_screen.dart';
-import 'core/common/welcome_screens/onboarding_screen.dart';
-import 'core/common/authentication_screens/signup_screen.dart';
-import 'core/common/welcome_screens/splash_screen.dart';
-import 'core/common/utils/bottom_navbar.dart';
+import 'auth/auth_wrapper.dart';
+import 'auth/forgot_password_screen.dart';
+import 'auth/login_screen.dart';
+import 'auth/onboarding_screen.dart';
+import 'auth/signup_screen.dart';
+import 'auth/splash_screen.dart';
 import 'firebase_options.dart';
-
+import 'modules/user/screens/user_companies_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +47,6 @@ class ConstructaApp extends StatelessWidget {
           onSurface: AppColors.textPrimary,
           outline: AppColors.borderLight,
         ),
-        // Google Fonts Poppins Theme globally applied
         textTheme: GoogleFonts.poppinsTextTheme(
           Theme.of(context).textTheme,
         ),
@@ -60,7 +59,8 @@ class ConstructaApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
-        '/home': (context) => const MainNavigationShell(),
+        '/home': (context) => const AuthWrapper(),
+        '/companies': (context) => const UserCompaniesScreen(),
       },
     );
   }
