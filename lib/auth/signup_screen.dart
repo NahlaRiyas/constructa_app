@@ -9,6 +9,26 @@ import '../core/services/company_service.dart';
 import '../core/models/company_model.dart';
 import '../core/common/utils/global.dart';
 
+/// ============================================================================
+/// FILE: signup_screen.dart
+/// MODULE: Authentication (Auth UI Layer)
+/// PROJECT: Constructa App - College Project
+/// DESCRIPTION:
+///   Provides user registration interface for the Constructa application.
+///   Supports dual-role account creation (Customer/User vs Constructor Company),
+///   profile image uploads, role-based database record creation, terms
+///   validation, and handling existing account fallbacks.
+/// ============================================================================
+
+/// [SignUpScreen] is a stateful widget representing user registration view.
+///
+/// Features & Functionality:
+/// - Account creation with full name, email, phone number, password, and avatar.
+/// - Dual-role account selection: Customer (User) or Constructor Company.
+/// - Automatic profile image upload to Firebase Storage.
+/// - Automatic Firestore database document creation (`users` and `companies`).
+/// - Single Sign-On (SSO) via Google OAuth.
+/// - Duplicate email collision handling (`email-already-in-use`).
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -16,21 +36,51 @@ class SignUpScreen extends StatefulWidget {
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
+/// [_SignUpScreenState] manages state and user interaction for [SignUpScreen].
 class _SignUpScreenState extends State<SignUpScreen> {
+  // ---------------------------------------------------------------------------
+  // CONTROLLERS & STATE VARIABLES
+  // ---------------------------------------------------------------------------
+
+  /// Controller for capturing and retrieving user full name or business name.
   final _fullNameController = TextEditingController();
+
+  /// Controller for capturing and retrieving user email address.
   final _emailController = TextEditingController();
+
+  /// Controller for capturing and retrieving contact phone number.
   final _phoneController = TextEditingController();
+
+  /// Controller for capturing user account password.
   final _passwordController = TextEditingController();
 
+  /// Auth service instance for Firebase Auth operations.
   final AuthService _authService = AuthService();
+
+  /// Image picker helper instance for selecting profile picture from gallery.
   final ImagePicker _picker = ImagePicker();
+
+  /// Local file reference holding selected profile picture image.
   File? _imageFile;
 
+  /// Async state flag tracking form submission progress.
   bool _isLoading = false;
+
+  /// Role selection flag: `true` for Customer account, `false` for Constructor Company.
   bool _isCustomer = true;
+
+  /// User consent checkbox state for Terms of Service.
   bool _agreedToTerms = true;
+
+  /// Password field visibility toggle: `true` masks input, `false` exposes plain text.
   bool _obscurePassword = true;
 
+  // ---------------------------------------------------------------------------
+  // SIGNUP & MEDIA HANDLERS
+  // ---------------------------------------------------------------------------
+
+  /// Opens native device image gallery to select profile picture.
+  /// Updates local state [_imageFile] upon selection.
   Future<void> _pickImage() async {
     final XFile? pickedFile =
         await _picker.pickImage(source: ImageSource.gallery);
@@ -41,6 +91,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  /// Handles Email/Password registration and multi-role profile setup.
+  ///
+  /// Workflow:
+  /// 1. Validates user acceptance of Terms of Service.
+  /// 2. Validates that all required input fields are non-empty.
+  /// 3. Determines target user role ('customer' or 'company').
+  /// 4. Calls [AuthService.signUp] to create Firebase Auth user, upload profile image,
+  ///    and write user details to Firestore `users` collection.
+  /// 5. If registering as a 'company', provisions initial [CompanyModel] document
+  ///    in Firestore via [CompanyService].
+  /// 6. Catches [FirebaseAuthException] `email-already-in-use`:
+  ///    - Tries automatic login & role update if password matches.
+  ///    - Displays helpful dialog offering user navigation to Login page (`/login`).
+  /// 7. Navigates to Home screen (`/home`) on success.
   Future<void> _handleSignUp() async {
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -181,6 +245,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  /// Handles Google OAuth Single Sign-On (SSO) account creation.
+  /// Checks Terms of Service acceptance before initiating sign up.
   Future<void> _handleGoogleSignUp() async {
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -208,6 +274,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  /// Cleans up text editing controllers upon widget disposal to prevent memory leaks.
   @override
   void dispose() {
     _fullNameController.dispose();
@@ -217,10 +284,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+  // ---------------------------------------------------------------------------
+  // BUILD METHOD & UI STRUCTURE
+  // ---------------------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
+    // Initialize global responsive layout metrics
     initScreenSize(context);
 
+    // Responsive container card width calculation
     final double cardWidth = w > 500 ? 460 : w * 0.92;
 
     return Scaffold(
@@ -261,6 +334,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // -----------------------------------------------------------
+                  // UI SECTION: Header Text
+                  // -----------------------------------------------------------
                   Text(
                     'Create Account',
                     textAlign: TextAlign.center,
@@ -272,7 +348,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: height * 0.01),
 
-                  // PROFILE PICTURE PICKER
+                  // -----------------------------------------------------------
+                  // UI SECTION: Profile Picture Picker (Avatar & Camera Icon)
+                  // -----------------------------------------------------------
                   Center(
                     child: Stack(
                       children: [
@@ -308,7 +386,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: height * 0.02),
 
-                  // ROLE TOGGLE (Customer vs Construction Company)
+                  // -----------------------------------------------------------
+                  // UI SECTION: Role Selector Toggle (Customer vs Constructor Co.)
+                  // -----------------------------------------------------------
                   Container(
                     padding: EdgeInsets.all(w * 0.01),
                     decoration: BoxDecoration(
@@ -375,6 +455,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: height * 0.02),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Full Name / Business Name Input Field
+                  // -----------------------------------------------------------
                   Text(
                     _isCustomer ? 'Full Name' : 'Company / Business Name',
                     style: GoogleFonts.poppins(
@@ -413,6 +496,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: height * 0.015),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Email Input Field
+                  // -----------------------------------------------------------
                   Text('Email Address',
                       style: GoogleFonts.poppins(
                           fontSize: w * 0.03,
@@ -448,6 +534,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: height * 0.015),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Phone Number Field
+                  // -----------------------------------------------------------
                   Text('Phone Number',
                       style: GoogleFonts.poppins(
                           fontSize: w * 0.03,
@@ -483,6 +572,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: height * 0.015),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Password Field & Obscure Toggle
+                  // -----------------------------------------------------------
                   Text('Password',
                       style: GoogleFonts.poppins(
                           fontSize: w * 0.03,
@@ -527,6 +619,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: height * 0.015),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Terms of Service Checkbox
+                  // -----------------------------------------------------------
                   Row(
                     children: [
                       Checkbox(
@@ -547,6 +642,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: height * 0.02),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Primary Submit Button
+                  // -----------------------------------------------------------
                   SizedBox(
                     width: double.infinity,
                     height: height * 0.06,
@@ -575,6 +673,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: height * 0.02),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Navigation Link to Login Screen
+                  // -----------------------------------------------------------
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -602,3 +703,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
+
