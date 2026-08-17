@@ -4,8 +4,29 @@ import '../../../theme/palette.dart';
 import '../../../core/models/user_model.dart';
 import '../../../core/services/auth_service.dart';
 
+/// ============================================================================
+/// FILE: user_profile_screen.dart
+/// MODULE: User Module (Customer Profile UI Layer)
+/// PROJECT: Constructa App - College Project
+/// DESCRIPTION:
+///   Displays profile management and account settings for authenticated
+///   customer users in Constructa. Renders real-time user details, user role badge,
+///   quick profile action items, and session sign-out functionality.
+/// ============================================================================
+
+/// [UserProfileScreen] is a stateless widget representing the customer account profile.
+///
+/// Features:
+/// - Real-time synchronization with current authenticated user state via [AuthService.getUserData].
+/// - Displays profile avatar, user full name, email address, and active role badge.
+/// - Navigation options for saved house plans, cost estimates, notification preferences, and help.
+/// - Session sign-out button that purges authentication state and redirects to Login (`/login`).
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});
+
+  // ---------------------------------------------------------------------------
+  // BUILD METHOD & UI STRUCTURE
+  // ---------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +49,9 @@ class UserProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                // Profile Card
+                // -------------------------------------------------------------
+                // UI SECTION: User Profile Details Header Card
+                // -------------------------------------------------------------
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -82,7 +105,9 @@ class UserProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // Settings List
+                // -------------------------------------------------------------
+                // UI SECTION: Profile Settings & Preferences List
+                // -------------------------------------------------------------
                 _buildProfileOption(Icons.bookmark_outline, 'Saved House Plans', () {}),
                 _buildProfileOption(Icons.calculate_outlined, 'Saved Cost Estimates', () {}),
                 _buildProfileOption(Icons.notifications_none, 'Notification Preferences', () {}),
@@ -90,7 +115,9 @@ class UserProfileScreen extends StatelessWidget {
 
                 const SizedBox(height: 28),
 
-                // Logout Button
+                // -------------------------------------------------------------
+                // UI SECTION: Session Sign Out Button
+                // -------------------------------------------------------------
                 SizedBox(
                   width: double.infinity,
                   height: 48,
@@ -118,6 +145,11 @@ class UserProfileScreen extends StatelessWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // HELPER WIDGET BUILDERS
+  // ---------------------------------------------------------------------------
+
+  /// Renders a styled list tile item for profile options and preferences.
   Widget _buildProfileOption(IconData icon, String title, VoidCallback onTap) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -135,3 +167,4 @@ class UserProfileScreen extends StatelessWidget {
     );
   }
 }
+
