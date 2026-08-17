@@ -13,6 +13,25 @@ import 'house_plan_detail_screen.dart';
 import 'house_plans_screen.dart';
 import 'book_service_screen.dart';
 
+/// ============================================================================
+/// FILE: user_home_screen.dart
+/// MODULE: User Module (Customer Home Dashboard Layer)
+/// PROJECT: Constructa App - College Project
+/// DESCRIPTION:
+///   Main dashboard screen for authenticated customer users in Constructa.
+///   Features dynamic search & category filtering for contractors/companies,
+///   house plan recommendations, interactive construction cost estimation modal,
+///   3D virtual tour viewer modal, and service booking entry points.
+/// ============================================================================
+
+/// [UserHomeScreen] is a stateful widget serving as the customer landing dashboard.
+///
+/// Key Dashboard Components:
+/// - Dynamic user greeting header listening to user profile changes via [AuthService].
+/// - Real-time Search input & horizontal Category Filter chips.
+/// - Top Rated Companies listing fed live by [CompanyService].
+/// - Popular House Plans 2-column grid fed live by [HousePlanService].
+/// - Interactive Bento Section with Cost Calculator & 3D Virtual Tour modals.
 class UserHomeScreen extends StatefulWidget {
   const UserHomeScreen({super.key});
 
@@ -20,11 +39,22 @@ class UserHomeScreen extends StatefulWidget {
   State<UserHomeScreen> createState() => _UserHomeScreenState();
 }
 
+/// [_UserHomeScreenState] manages UI filtering state, search queries, and modal triggers.
 class _UserHomeScreenState extends State<UserHomeScreen> {
+  // ---------------------------------------------------------------------------
+  // STATE VARIABLES & CONTROLLERS
+  // ---------------------------------------------------------------------------
+
+  /// Active selected category filter (e.g. 'Construction', 'Renovation', 'Interior').
   String _selectedCategory = 'Construction';
+
+  /// Text editing controller capturing customer search query inputs.
   final TextEditingController _searchController = TextEditingController();
+
+  /// Normalized lowercase query string derived from [_searchController].
   String _searchQuery = '';
 
+  /// Category configuration map defining labels and associated icons.
   final List<Map<String, dynamic>> _categories = [
     {'label': 'Construction', 'icon': Icons.construction},
     {'label': 'Renovation', 'icon': Icons.home_repair_service},
@@ -33,9 +63,14 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     {'label': 'Electrical', 'icon': Icons.electrical_services},
   ];
 
+  // ---------------------------------------------------------------------------
+  // LIFECYCLE METHODS
+  // ---------------------------------------------------------------------------
+
   @override
   void initState() {
     super.initState();
+    // Attach listener to capture live search query input updates
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text.trim().toLowerCase();
@@ -49,6 +84,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     super.dispose();
   }
 
+  // ---------------------------------------------------------------------------
+  // HELPER & UTILITY METHODS
+  // ---------------------------------------------------------------------------
+
+  /// Calculates appropriate time-based greeting string (Morning/Afternoon/Evening).
   String _getGreeting() {
     final hour = DateTime.now().hour;
     if (hour < 12) return 'Good Morning,';
@@ -56,7 +96,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     return 'Good Evening,';
   }
 
-  // Interactive Cost Calculator Dialog
+  /// Displays interactive Construction Cost Estimator Modal Bottom Sheet.
+  ///
+  /// Features:
+  /// - Slider to adjust total built-up area (sq.ft).
+  /// - Quality grade selector (Standard vs Premium).
+  /// - Live cost breakdown calculation: Materials (60%), Labor (30%), Permits (10%).
+  /// - Action button to book consultation with estimate pre-filled.
   void _showCostCalculatorModal(BuildContext context) {
     double sqft = 2000;
     String quality = 'Standard';
@@ -191,6 +237,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
+  /// Renders a selectable quality grade chip (Standard vs Premium) for the cost calculator.
   Widget _buildQualityChip(String label, bool isSelected, VoidCallback onTap) {
     return Expanded(
       child: GestureDetector(
@@ -212,6 +259,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
+  /// Renders a key-value row for estimated cost breakdown items inside cost calculator modal.
   Widget _buildCostRow(String title, String val) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -225,7 +273,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
-  // Interactive Virtual Tour Gallery Modal
+  /// Displays 3D Virtual Room Walkthrough Preview Modal Dialog.
   void _showVirtualTourModal(BuildContext context) {
     showDialog(
       context: context,
@@ -268,8 +316,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // BUILD METHOD & UI DASHBOARD LAYOUT
+  // ---------------------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
+    // Initialize global responsive layout metrics
     initScreenSize(context);
     final double horizontalPadding = w * 0.05;
 
@@ -285,6 +338,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             backgroundColor: AppColors.cardBackground,
             elevation: 0,
             titleSpacing: horizontalPadding,
+            // -----------------------------------------------------------------
+            // UI SECTION: App Bar Header (User Greeting & Profile Avatar)
+            // -----------------------------------------------------------------
             title: Row(
               children: [
                 Container(
@@ -333,7 +389,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Dynamic Search Bar
+                // -------------------------------------------------------------
+                // UI SECTION: Live Search Input Bar
+                // -------------------------------------------------------------
                 TextField(
                   controller: _searchController,
                   style: GoogleFonts.inter(fontSize: 14, color: AppColors.textPrimary),
@@ -357,7 +415,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Dynamic Category Filter Chips
+                // -------------------------------------------------------------
+                // UI SECTION: Category Filter Chips Bar
+                // -------------------------------------------------------------
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -393,7 +453,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 ),
                 const SizedBox(height: 28),
 
-                // Dynamic Top Rated Companies Header & List
+                // -------------------------------------------------------------
+                // UI SECTION: Top Rated Companies Section (StreamBuilder)
+                // -------------------------------------------------------------
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -441,7 +503,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 ),
                 const SizedBox(height: 28),
 
-                // Dynamic Popular House Plans Header & Grid
+                // -------------------------------------------------------------
+                // UI SECTION: Popular House Plans Grid (StreamBuilder)
+                // -------------------------------------------------------------
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -500,13 +564,15 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 ),
                 const SizedBox(height: 28),
 
-                // Recommended for You (Interactive Bento Section)
+                // -------------------------------------------------------------
+                // UI SECTION: Recommended for You (Interactive Bento Grid)
+                // -------------------------------------------------------------
                 Text('Recommended for You', style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
                 const SizedBox(height: 14),
 
                 Column(
                   children: [
-                    // Hero Bento Card (Site Inspection)
+                    // Hero Bento Card (Site Inspection Booking)
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
@@ -558,10 +624,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     ),
                     const SizedBox(height: 12),
 
-                    // Side-by-side Interactive Bento Cards
+                    // Side-by-side Interactive Bento Feature Cards
                     Row(
                       children: [
-                        // Interactive Cost Calculator Card
+                        // Cost Calculator Card Trigger
                         Expanded(
                           child: GestureDetector(
                             onTap: () => _showCostCalculatorModal(context),
@@ -595,7 +661,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         ),
                         const SizedBox(width: 12),
 
-                        // Interactive Virtual Tour Card
+                        // Virtual Tour Card Trigger
                         Expanded(
                           child: GestureDetector(
                             onTap: () => _showVirtualTourModal(context),
@@ -640,6 +706,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // CARD BUILDER WIDGETS
+  // ---------------------------------------------------------------------------
+
+  /// Builds a top-rated company list item card displaying logo, name, rating, reviews, location.
   Widget _buildCompanyCard(BuildContext context, CompanyModel company) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -710,6 +781,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
+  /// Builds a house plan grid item card displaying thumbnail image, tag, title, BHK, sq.ft.
   Widget _buildHousePlanCard(BuildContext context, HousePlanModel plan) {
     return GestureDetector(
       onTap: () {
@@ -766,3 +838,4 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 }
+
