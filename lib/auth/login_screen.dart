@@ -4,6 +4,23 @@ import '../theme/palette.dart';
 import '../core/services/auth_service.dart';
 import '../core/common/utils/global.dart';
 
+/// ============================================================================
+/// FILE: login_screen.dart
+/// MODULE: Authentication (Auth UI Layer)
+/// PROJECT: Constructa App - College Project
+/// DESCRIPTION:
+///   Provides the user interface for authenticating existing users into the
+///   Constructa application. Supports traditional Email/Password login
+///   and single sign-on via Google OAuth authentication.
+/// ============================================================================
+
+/// [LoginScreen] is a stateful widget representing the user login view.
+///
+/// It provides entry points for:
+/// - User email & password authentication
+/// - Google OAuth Single Sign-On (SSO)
+/// - Navigation to Password Reset (`/forgot-password`)
+/// - Navigation to User Registration (`/signup`)
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -11,13 +28,45 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
+/// [_LoginScreenState] manages state and user interaction for [LoginScreen].
+///
+/// Handles form input state, obscure text toggles, loading state transitions,
+/// and delegates authentication calls to [AuthService].
 class _LoginScreenState extends State<LoginScreen> {
+  // ---------------------------------------------------------------------------
+  // CONTROLLERS & STATE VARIABLES
+  // ---------------------------------------------------------------------------
+
+  /// Controller for capturing and retrieving user email input.
   final _emailController = TextEditingController();
+
+  /// Controller for capturing and retrieving user password input.
   final _passwordController = TextEditingController();
+
+  /// Toggles visibility of the password field text.
+  /// `true` masks the password (default), `false` reveals plain text.
   bool _obscureText = true;
+
+  /// Tracks authentication processing status.
+  /// Used to disable UI buttons and display progress indicators during async requests.
   bool _isLoading = false;
+
+  /// Instance of [AuthService] for handling backend authentication requests.
   final AuthService _authService = AuthService();
 
+  // ---------------------------------------------------------------------------
+  // AUTHENTICATION HANDLERS (LOGIN SECTION)
+  // ---------------------------------------------------------------------------
+
+  /// Handles Email and Password Login process.
+  ///
+  /// Workflow:
+  /// 1. Validates that email and password fields are non-empty.
+  /// 2. Sets loading indicator state (`_isLoading = true`).
+  /// 3. Invokes [AuthService.login] with sanitized input values.
+  /// 4. On successful authentication, navigates to the home screen (`/home`).
+  /// 5. On failure, catches exceptions and presents a user-friendly SnackBar error.
+  /// 6. Resets loading state in the `finally` block safely verifying `mounted`.
   Future<void> _handleLogin() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -50,6 +99,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  /// Handles Google Single Sign-On (SSO) authentication.
+  ///
+  /// Workflow:
+  /// 1. Enables loading state (`_isLoading = true`).
+  /// 2. Triggers Google authentication workflow via [AuthService.signInWithGoogle].
+  /// 3. On successful authentication and profile verification, navigates to `/home`.
+  /// 4. Displays SnackBar error message if sign-in is cancelled or fails.
+  /// 5. Resets loading indicator when process completes.
   Future<void> _handleGoogleSignIn() async {
     setState(() => _isLoading = true);
     try {
@@ -70,10 +127,16 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // BUILD METHOD & UI STRUCTURE
+  // ---------------------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
+    // Initialize global screen utility dimensions (responsive width & height)
     initScreenSize(context);
 
+    // Responsive container card width definition based on screen size
     final double cardWidth = w > 500 ? 440 : w * 0.92;
 
     return Scaffold(
@@ -101,6 +164,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SizedBox(height: height * 0.0125),
+
+                  // -----------------------------------------------------------
+                  // UI SECTION: Header Text & Subtitle
+                  // -----------------------------------------------------------
                   Text(
                     'Welcome Back!',
                     textAlign: TextAlign.center,
@@ -121,6 +188,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: height * 0.035),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Email Input Field
+                  // -----------------------------------------------------------
                   Text('Email Address', style: GoogleFonts.poppins(fontSize: w * 0.03, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                   SizedBox(height: height * 0.0075),
                   TextField(
@@ -148,6 +218,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: height * 0.0225),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Password Input Field & Forgot Password Link
+                  // -----------------------------------------------------------
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -188,6 +261,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: height * 0.03),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Primary Login Button
+                  // -----------------------------------------------------------
                   SizedBox(
                     width: double.infinity,
                     height: height * 0.0625,
@@ -219,6 +295,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: height * 0.025),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Social Divider
+                  // -----------------------------------------------------------
                   Row(
                     children: [
                       const Expanded(child: Divider(color: AppColors.borderLight)),
@@ -231,6 +310,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: height * 0.025),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Google Sign-In Button
+                  // -----------------------------------------------------------
                   OutlinedButton.icon(
                     onPressed: _isLoading ? null : _handleGoogleSignIn,
                     style: OutlinedButton.styleFrom(
@@ -243,6 +325,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: height * 0.03),
 
+                  // -----------------------------------------------------------
+                  // UI SECTION: Registration / Sign Up Navigation Link
+                  // -----------------------------------------------------------
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -262,3 +347,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
