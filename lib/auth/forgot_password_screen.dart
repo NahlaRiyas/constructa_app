@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/palette.dart';
 import '../core/services/auth_service.dart';
 import '../core/common/utils/global.dart';
+import '../core/common/utils/validation_utils.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -13,13 +14,11 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
   Future<void> _handleReset() async {
-    if (_emailController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter your email address.')),
-      );
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
@@ -63,35 +62,38 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(w * 0.06),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Forgot your password?',
-                style: GoogleFonts.poppins(fontSize: w * 0.055, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-              ),
-              SizedBox(height: height * 0.01),
-              Text(
-                'Enter your registered email address below to receive password reset instructions.',
-                style: GoogleFonts.poppins(fontSize: w * 0.032, color: AppColors.textSecondary),
-              ),
-              SizedBox(height: height * 0.03),
-
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                style: GoogleFonts.poppins(fontSize: w * 0.035, color: AppColors.textPrimary),
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.mail_outline, color: AppColors.textSecondary),
-                  hintText: 'name@example.com',
-                  hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w * 0.032),
-                  filled: true,
-                  fillColor: AppColors.cardBackground,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Forgot your password?',
+                  style: GoogleFonts.poppins(fontSize: w * 0.055, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                 ),
-              ),
+                SizedBox(height: height * 0.01),
+                Text(
+                  'Enter your registered email address below to receive password reset instructions.',
+                  style: GoogleFonts.poppins(fontSize: w * 0.032, color: AppColors.textSecondary),
+                ),
+                SizedBox(height: height * 0.03),
+
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: GoogleFonts.poppins(fontSize: w * 0.035, color: AppColors.textPrimary),
+                  validator: ValidationUtils.validateEmail,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.mail_outline, color: AppColors.textSecondary),
+                    hintText: 'name@example.com',
+                    hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w * 0.032),
+                    filled: true,
+                    fillColor: AppColors.cardBackground,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+                  ),
+                ),
               SizedBox(height: height * 0.03),
 
               SizedBox(
@@ -111,6 +113,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 }

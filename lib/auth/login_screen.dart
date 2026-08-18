@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/palette.dart';
 import '../core/services/auth_service.dart';
 import '../core/common/utils/global.dart';
+import '../core/common/utils/validation_utils.dart';
 
 /// ============================================================================
 /// FILE: login_screen.dart
@@ -43,6 +44,9 @@ class _LoginScreenState extends State<LoginScreen> {
   /// Controller for capturing and retrieving user password input.
   final _passwordController = TextEditingController();
 
+  /// Key for identifying the login form and performing validation.
+  final _formKey = GlobalKey<FormState>();
+
   /// Toggles visibility of the password field text.
   /// `true` masks the password (default), `false` reveals plain text.
   bool _obscureText = true;
@@ -68,10 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
   /// 5. On failure, catches exceptions and presents a user-friendly SnackBar error.
   /// 6. Resets loading state in the `finally` block safely verifying `mounted`.
   Future<void> _handleLogin() async {
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields.')),
-      );
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
@@ -145,120 +146,125 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Center(
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: w * 0.05, vertical: height * 0.025),
-            child: Container(
-              width: cardWidth,
-              padding: EdgeInsets.all(w * 0.06),
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.borderLight),
-                boxShadow: const [
-                  BoxShadow(
-                    color: AppColors.shadowColor,
-                    blurRadius: 16,
-                    offset: Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: height * 0.0125),
+            child: Form(
+              key: _formKey,
+              child: Container(
+                width: cardWidth,
+                padding: EdgeInsets.all(w * 0.06),
+                decoration: BoxDecoration(
+                  color: AppColors.cardBackground,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.borderLight),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: AppColors.shadowColor,
+                      blurRadius: 16,
+                      offset: Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: height * 0.0125),
 
-                  // -----------------------------------------------------------
-                  // UI SECTION: Header Text & Subtitle
-                  // -----------------------------------------------------------
-                  Text(
-                    'Welcome Back!',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: w * 0.065,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
+                    // -----------------------------------------------------------
+                    // UI SECTION: Header Text & Subtitle
+                    // -----------------------------------------------------------
+                    Text(
+                      'Welcome Back!',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: w * 0.065,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: height * 0.01),
-                  Text(
-                    'Access customer services or company dashboard.',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: w * 0.032,
-                      color: AppColors.textSecondary,
+                    SizedBox(height: height * 0.01),
+                    Text(
+                      'Access customer services or company dashboard.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: w * 0.032,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: height * 0.035),
+                    SizedBox(height: height * 0.035),
 
-                  // -----------------------------------------------------------
-                  // UI SECTION: Email Input Field
-                  // -----------------------------------------------------------
-                  Text('Email Address', style: GoogleFonts.poppins(fontSize: w * 0.03, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-                  SizedBox(height: height * 0.0075),
-                  TextField(
-                    controller: _emailController,
-                    style: GoogleFonts.poppins(fontSize: w * 0.035, color: AppColors.textPrimary),
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.mail_outline, color: AppColors.textSecondary),
-                      hintText: 'name@company.com',
-                      hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w * 0.032),
-                      filled: true,
-                      fillColor: AppColors.surfaceLight,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.borderLight),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.borderLight),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                    // -----------------------------------------------------------
+                    // UI SECTION: Email Input Field
+                    // -----------------------------------------------------------
+                    Text('Email Address', style: GoogleFonts.poppins(fontSize: w * 0.03, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                    SizedBox(height: height * 0.0075),
+                    TextFormField(
+                      controller: _emailController,
+                      style: GoogleFonts.poppins(fontSize: w * 0.035, color: AppColors.textPrimary),
+                      validator: ValidationUtils.validateEmail,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.mail_outline, color: AppColors.textSecondary),
+                        hintText: 'name@company.com',
+                        hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w * 0.032),
+                        filled: true,
+                        fillColor: AppColors.surfaceLight,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.borderLight),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.borderLight),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: height * 0.0225),
+                    SizedBox(height: height * 0.0225),
 
-                  // -----------------------------------------------------------
-                  // UI SECTION: Password Input Field & Forgot Password Link
-                  // -----------------------------------------------------------
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Password', style: GoogleFonts.poppins(fontSize: w * 0.03, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-                      TextButton(
-                        onPressed: () => Navigator.pushNamed(context, '/forgot-password'),
-                        child: Text('Forgot Password?', style: GoogleFonts.poppins(color: AppColors.primary, fontSize: w * 0.03, fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: _obscureText,
-                    style: GoogleFonts.poppins(fontSize: w * 0.035, color: AppColors.textPrimary),
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary),
-                      suffixIcon: IconButton(
-                        icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: AppColors.textSecondary),
-                        onPressed: () => setState(() => _obscureText = !_obscureText),
-                      ),
-                      hintText: '••••••••',
-                      hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w * 0.032),
-                      filled: true,
-                      fillColor: AppColors.surfaceLight,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.borderLight),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.borderLight),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                    // -----------------------------------------------------------
+                    // UI SECTION: Password Input Field & Forgot Password Link
+                    // -----------------------------------------------------------
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Password', style: GoogleFonts.poppins(fontSize: w * 0.03, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                        TextButton(
+                          onPressed: () => Navigator.pushNamed(context, '/forgot-password'),
+                          child: Text('Forgot Password?', style: GoogleFonts.poppins(color: AppColors.primary, fontSize: w * 0.03, fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: _obscureText,
+                      style: GoogleFonts.poppins(fontSize: w * 0.035, color: AppColors.textPrimary),
+                      validator: ValidationUtils.validatePassword,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary),
+                        suffixIcon: IconButton(
+                          icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: AppColors.textSecondary),
+                          onPressed: () => setState(() => _obscureText = !_obscureText),
+                        ),
+                        hintText: '••••••••',
+                        hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w * 0.032),
+                        filled: true,
+                        fillColor: AppColors.surfaceLight,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.borderLight),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.borderLight),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                        ),
                       ),
                     ),
-                  ),
                   SizedBox(height: height * 0.03),
 
                   // -----------------------------------------------------------
@@ -344,7 +350,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 }
 

@@ -1,5 +1,5 @@
-class ImageConstants {
-  static const onboarding="assets/images/onboarding.jpg";
-
+// class ImageConstants {
+//   static const onboarding="assets/images/onboarding.jpg";
+//
+// // }
 // }
-}
