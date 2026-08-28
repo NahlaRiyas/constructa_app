@@ -1,7 +1,7 @@
 import 'package:constructa_app/theme/palette.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 
 import 'auth/auth_wrapper.dart';
@@ -11,6 +11,7 @@ import 'auth/onboarding_screen.dart';
 import 'auth/signup_screen.dart';
 import 'auth/splash_screen.dart';
 import 'firebase_options.dart';
+import 'modules/admin/navigation/admin_shell.dart';
 import 'modules/user/screens/user_companies_screen.dart';
 
 Future<void> main() async {
@@ -20,10 +21,13 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // Only lock orientation on non-web platforms (web admin needs landscape)
+  // if (!const bool.fromEnvironment('dart.library.html')) {
+  //   await SystemChrome.setPreferredOrientations([
+  //     DeviceOrientation.portraitUp,
+  //     DeviceOrientation.portraitDown,
+  //   ]);
+  // }
 
   runApp(const ConstructaApp());
 }
@@ -61,6 +65,7 @@ class ConstructaApp extends StatelessWidget {
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/home': (context) => const AuthWrapper(),
         '/companies': (context) => const UserCompaniesScreen(),
+        '/admin': (context) => const AdminShell(),
       },
     );
   }

@@ -16,12 +16,6 @@ import '../core/common/utils/validation_utils.dart';
 /// ============================================================================
 
 /// [LoginScreen] is a stateful widget representing the user login view.
-///
-/// It provides entry points for:
-/// - User email & password authentication
-/// - Google OAuth Single Sign-On (SSO)
-/// - Navigation to Password Reset (`/forgot-password`)
-/// - Navigation to User Registration (`/signup`)
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -29,48 +23,16 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-/// [_LoginScreenState] manages state and user interaction for [LoginScreen].
-///
-/// Handles form input state, obscure text toggles, loading state transitions,
-/// and delegates authentication calls to [AuthService].
 class _LoginScreenState extends State<LoginScreen> {
-  // ---------------------------------------------------------------------------
-  // CONTROLLERS & STATE VARIABLES
-  // ---------------------------------------------------------------------------
-
-  /// Controller for capturing and retrieving user email input.
   final _emailController = TextEditingController();
-
-  /// Controller for capturing and retrieving user password input.
   final _passwordController = TextEditingController();
-
-  /// Key for identifying the login form and performing validation.
   final _formKey = GlobalKey<FormState>();
 
-  /// Toggles visibility of the password field text.
-  /// `true` masks the password (default), `false` reveals plain text.
   bool _obscureText = true;
-
-  /// Tracks authentication processing status.
-  /// Used to disable UI buttons and display progress indicators during async requests.
   bool _isLoading = false;
 
-  /// Instance of [AuthService] for handling backend authentication requests.
   final AuthService _authService = AuthService();
 
-  // ---------------------------------------------------------------------------
-  // AUTHENTICATION HANDLERS (LOGIN SECTION)
-  // ---------------------------------------------------------------------------
-
-  /// Handles Email and Password Login process.
-  ///
-  /// Workflow:
-  /// 1. Validates that email and password fields are non-empty.
-  /// 2. Sets loading indicator state (`_isLoading = true`).
-  /// 3. Invokes [AuthService.login] with sanitized input values.
-  /// 4. On successful authentication, navigates to the home screen (`/home`).
-  /// 5. On failure, catches exceptions and presents a user-friendly SnackBar error.
-  /// 6. Resets loading state in the `finally` block safely verifying `mounted`.
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -100,14 +62,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  /// Handles Google Single Sign-On (SSO) authentication.
-  ///
-  /// Workflow:
-  /// 1. Enables loading state (`_isLoading = true`).
-  /// 2. Triggers Google authentication workflow via [AuthService.signInWithGoogle].
-  /// 3. On successful authentication and profile verification, navigates to `/home`.
-  /// 4. Displays SnackBar error message if sign-in is cancelled or fails.
-  /// 5. Resets loading indicator when process completes.
   Future<void> _handleGoogleSignIn() async {
     setState(() => _isLoading = true);
     try {
@@ -128,16 +82,11 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // BUILD METHOD & UI STRUCTURE
-  // ---------------------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
-    // Initialize global screen utility dimensions (responsive width & height)
     initScreenSize(context);
 
-    // Responsive container card width definition based on screen size
+    // Clamp width and height for responsive desktop web rendering
     final double cardWidth = w > 500 ? 440 : w * 0.92;
 
     return Scaffold(
@@ -145,12 +94,12 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: w * 0.05, vertical: height * 0.025),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             child: Form(
               key: _formKey,
               child: Container(
                 width: cardWidth,
-                padding: EdgeInsets.all(w * 0.06),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: AppColors.cardBackground,
                   borderRadius: BorderRadius.circular(20),
@@ -166,45 +115,41 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    SizedBox(height: height * 0.0125),
+                    const SizedBox(height: 12),
 
-                    // -----------------------------------------------------------
-                    // UI SECTION: Header Text & Subtitle
-                    // -----------------------------------------------------------
+                    // Header Text
                     Text(
                       'Welcome Back!',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
-                        fontSize: w * 0.065,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary,
                       ),
                     ),
-                    SizedBox(height: height * 0.01),
+                    const SizedBox(height: 8),
                     Text(
                       'Access customer services or company dashboard.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
-                        fontSize: w * 0.032,
+                        fontSize: 13,
                         color: AppColors.textSecondary,
                       ),
                     ),
-                    SizedBox(height: height * 0.035),
+                    const SizedBox(height: 24),
 
-                    // -----------------------------------------------------------
-                    // UI SECTION: Email Input Field
-                    // -----------------------------------------------------------
-                    Text('Email Address', style: GoogleFonts.poppins(fontSize: w * 0.03, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-                    SizedBox(height: height * 0.0075),
+                    // Email Input Field
+                    Text('Email Address', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                    const SizedBox(height: 8),
                     TextFormField(
                       controller: _emailController,
-                      style: GoogleFonts.poppins(fontSize: w * 0.035, color: AppColors.textPrimary),
+                      style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
                       validator: ValidationUtils.validateEmail,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.mail_outline, color: AppColors.textSecondary),
                         hintText: 'name@company.com',
-                        hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w * 0.032),
+                        hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: 13),
                         filled: true,
                         fillColor: AppColors.surfaceLight,
                         border: OutlineInputBorder(
@@ -221,25 +166,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: height * 0.0225),
+                    const SizedBox(height: 16),
 
-                    // -----------------------------------------------------------
-                    // UI SECTION: Password Input Field & Forgot Password Link
-                    // -----------------------------------------------------------
+                    // Password Field
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Password', style: GoogleFonts.poppins(fontSize: w * 0.03, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                        Text('Password', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                         TextButton(
                           onPressed: () => Navigator.pushNamed(context, '/forgot-password'),
-                          child: Text('Forgot Password?', style: GoogleFonts.poppins(color: AppColors.primary, fontSize: w * 0.03, fontWeight: FontWeight.bold)),
+                          child: Text('Forgot Password?', style: GoogleFonts.poppins(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscureText,
-                      style: GoogleFonts.poppins(fontSize: w * 0.035, color: AppColors.textPrimary),
+                      style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
                       validator: ValidationUtils.validatePassword,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary),
@@ -248,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () => setState(() => _obscureText = !_obscureText),
                         ),
                         hintText: '••••••••',
-                        hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w * 0.032),
+                        hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: 13),
                         filled: true,
                         fillColor: AppColors.surfaceLight,
                         border: OutlineInputBorder(
@@ -265,92 +208,84 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                  SizedBox(height: height * 0.03),
+                    const SizedBox(height: 24),
 
-                  // -----------------------------------------------------------
-                  // UI SECTION: Primary Login Button
-                  // -----------------------------------------------------------
-                  SizedBox(
-                    width: double.infinity,
-                    height: height * 0.0625,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _handleLogin,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.textLight,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: AppColors.textLight,
-                                strokeWidth: 2,
+                    // Login Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _handleLogin,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: AppColors.textLight,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.textLight,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('Login', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold)),
+                                  const SizedBox(width: 8),
+                                  const Icon(Icons.arrow_forward, size: 18),
+                                ],
                               ),
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('Login', style: GoogleFonts.poppins(fontSize: w * 0.0375, fontWeight: FontWeight.bold)),
-                                const SizedBox(width: 8),
-                                const Icon(Icons.arrow_forward, size: 18),
-                              ],
-                            ),
-                    ),
-                  ),
-                  SizedBox(height: height * 0.025),
-
-                  // -----------------------------------------------------------
-                  // UI SECTION: Social Divider
-                  // -----------------------------------------------------------
-                  Row(
-                    children: [
-                      const Expanded(child: Divider(color: AppColors.borderLight)),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: w * 0.035),
-                        child: Text('OR CONTINUE WITH', style: GoogleFonts.poppins(fontSize: w * 0.025, color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
                       ),
-                      const Expanded(child: Divider(color: AppColors.borderLight)),
-                    ],
-                  ),
-                  SizedBox(height: height * 0.025),
-
-                  // -----------------------------------------------------------
-                  // UI SECTION: Google Sign-In Button
-                  // -----------------------------------------------------------
-                  OutlinedButton.icon(
-                    onPressed: _isLoading ? null : _handleGoogleSignIn,
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: Size(double.infinity, height * 0.06),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      side: const BorderSide(color: AppColors.borderLight),
                     ),
-                    icon: Image.network('https://e7.pngegg.com/pngimages/337/722/png-clipart-google-search-google-account-google-s-google-play-google-company-text-thumbnail.png', height: height * 0.035),
-                    label: Text('Google Sign In', style: GoogleFonts.poppins(color: AppColors.textPrimary, fontSize: w * 0.038, fontWeight: FontWeight.w500)),
-                  ),
-                  SizedBox(height: height * 0.03),
+                    const SizedBox(height: 20),
 
-                  // -----------------------------------------------------------
-                  // UI SECTION: Registration / Sign Up Navigation Link
-                  // -----------------------------------------------------------
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Don't have an account? ", style: GoogleFonts.poppins(fontSize: w * 0.032, color: AppColors.textSecondary)),
-                      GestureDetector(
-                        onTap: () => Navigator.pushNamed(context, '/signup'),
-                        child: Text('Sign Up', style: GoogleFonts.poppins(fontSize: w * 0.032, color: AppColors.primary, fontWeight: FontWeight.bold)),
+                    // Divider
+                    Row(
+                      children: [
+                        const Expanded(child: Divider(color: AppColors.borderLight)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Text('OR CONTINUE WITH', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
+                        ),
+                        const Expanded(child: Divider(color: AppColors.borderLight)),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Google Sign-In Button
+                    OutlinedButton.icon(
+                      onPressed: _isLoading ? null : _handleGoogleSignIn,
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        side: const BorderSide(color: AppColors.borderLight),
                       ),
-                    ],
-                  ),
-                ],
+                      icon: const Icon(Icons.g_mobiledata, size: 28, color: AppColors.primary),
+                      label: Text('Google Sign In', style: GoogleFonts.poppins(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w500)),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Sign Up Link
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Don't have an account? ", style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary)),
+                        GestureDetector(
+                          onTap: () => Navigator.pushNamed(context, '/signup'),
+                          child: Text('Sign Up', style: GoogleFonts.poppins(fontSize: 13, color: AppColors.primary, fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
-    ));
+    );
   }
 }
-

@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../core/models/user_model.dart';
 import '../core/services/auth_service.dart';
 import '../modules/user/navigation/user_bottom_nav.dart';
 import '../modules/constructor/navigation/constructor_bottom_nav.dart';
+import '../modules/admin/navigation/admin_shell.dart';
 import 'login_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
@@ -27,7 +29,7 @@ class AuthWrapper extends StatelessWidget {
           return const LoginScreen();
         }
 
-        // Fetch user document to check role ('customer' or 'company')
+        // Fetch user document to check role ('customer', 'company', or 'admin')
         return StreamBuilder<UserModel?>(
           stream: AuthService().getUserData(),
           builder: (context, userSnapshot) {
@@ -40,6 +42,12 @@ class AuthWrapper extends StatelessWidget {
             }
 
             final userModel = userSnapshot.data;
+
+            // Admin role (check role field or email containing 'admin')
+            if (userModel?.role == 'admin' || (userModel?.email != null && userModel!.email.toLowerCase().contains('admin'))) {
+              return const AdminShell();
+            }
+
             if (userModel?.role == 'company' || userModel?.role == 'constructor') {
               return const ConstructorMainNavigationShell();
             }
