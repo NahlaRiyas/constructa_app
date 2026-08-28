@@ -15,10 +15,10 @@ class BookServiceScreen extends StatefulWidget {
 
   const BookServiceScreen({
     super.key,
-    this.companyId = 'comp_1',
-    this.companyName = 'BuildWell Constructions',
-    this.planId = 'plan_1',
-    this.planTitle = 'Modern Nordic Villa (3BHK)',
+    required this.companyId,
+    required this.companyName,
+    required this.planId,
+    required this.planTitle,
   });
 
   @override

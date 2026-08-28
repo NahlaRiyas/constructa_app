@@ -216,6 +216,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => BookServiceScreen(
+                              companyId: '',
+                              companyName: '',
+                              planId: '',
                               planTitle: '${sqft.toInt()} sq.ft $quality Grade House',
                             ),
                           ),
@@ -377,7 +380,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   icon: const Icon(Icons.notifications_outlined, color: AppColors.textSecondary),
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Notifications: You have 0 pending notifications.')),
+                      const SnackBar(content: Text('No new notifications.')),
                     );
                   },
                 ),
@@ -607,7 +610,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => const BookServiceScreen()),
+                                    MaterialPageRoute(builder: (context) => const BookServiceScreen(
+                                      companyId: '',
+                                      companyName: '',
+                                      planId: '',
+                                      planTitle: 'Site Inspection Consultation',
+                                    )),
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(

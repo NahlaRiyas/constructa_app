@@ -116,8 +116,40 @@ class ConstructorProfileScreen extends StatelessWidget {
                     );
                   },
                 ),
-                _buildProfileOption(Icons.notifications_none, 'Notification Settings', () {}),
-                _buildProfileOption(Icons.help_outline, 'Contractor Support & Guidelines', () {}),
+                _buildProfileOption(Icons.notifications_none, 'Notification Settings', () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Notification settings will be available soon.')),
+                  );
+                }),
+                _buildProfileOption(Icons.help_outline, 'Contractor Support & Guidelines', () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Support & Guidelines', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+                      content: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Contractor Support', style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14)),
+                            const SizedBox(height: 8),
+                            Text('For any issues, contact us at support@constructa.app or call +91 98765 43210.', style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary)),
+                            const SizedBox(height: 16),
+                            Text('Guidelines', style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14)),
+                            const SizedBox(height: 8),
+                            Text('1. Keep your company profile updated.\n2. Respond to booking requests within 24 hours.\n3. Maintain quality standards for all projects.\n4. Address customer reviews professionally.', style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary, height: 1.5)),
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text('Close', style: GoogleFonts.poppins(color: AppColors.primary)),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
 
                 const SizedBox(height: 28),
 

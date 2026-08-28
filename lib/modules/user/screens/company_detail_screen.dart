@@ -143,7 +143,7 @@ class _CompanyDetailScreenState extends State<CompanyDetailScreen> with SingleTi
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => BookServiceScreen(companyId: widget.company.id, companyName: widget.company.name),
+                                builder: (context) => BookServiceScreen(companyId: widget.company.id, companyName: widget.company.name, planId: '', planTitle: 'General Consultation'),
                               ),
                             );
                           },

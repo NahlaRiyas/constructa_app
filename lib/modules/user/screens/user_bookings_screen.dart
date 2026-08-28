@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../theme/palette.dart';
 import '../../../core/models/booking_model.dart';
 import '../../../core/services/booking_service.dart';
@@ -134,21 +135,31 @@ class UserBookingsScreen extends StatelessWidget {
 
           Row(
             children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Contact feature: Calling contractor...')),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    side: const BorderSide(color: AppColors.borderLight),
+              if (booking.userPhone.isNotEmpty) ...[
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () async {
+                      final uri = Uri.parse('tel:${booking.userPhone}');
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(uri);
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Could not launch phone dialer.')),
+                          );
+                        }
+                      }
+                    },
+                    icon: const Icon(Icons.phone, size: 16),
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      side: const BorderSide(color: AppColors.borderLight),
+                    ),
+                    label: Text('Contact', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textPrimary)),
                   ),
-                  child: Text('Contact Builder', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textPrimary)),
                 ),
-              ),
-              const SizedBox(width: 10),
+                const SizedBox(width: 10),
+              ],
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
@@ -159,23 +170,52 @@ class UserBookingsScreen extends StatelessWidget {
                           builder: (context) => RateProjectScreen(companyId: booking.companyId, companyName: booking.companyName),
                         ),
                       );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Reschedule request sent.')),
-                      );
+                    } else if (booking.status == 'Pending' || booking.status == 'Confirmed') {
+                      _showCancelBookingDialog(context, booking);
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: booking.status == 'Completed' ? AppColors.primary : AppColors.statusDanger,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                   child: Text(
-                    booking.status == 'Completed' ? 'Rate Service' : 'Reschedule',
+                    booking.status == 'Completed' ? 'Rate Service' : 'Cancel Booking',
                     style: GoogleFonts.poppins(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCancelBookingDialog(BuildContext context, BookingModel booking) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Cancel Booking', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+        content: Text(
+          'Are you sure you want to cancel your booking with ${booking.companyName} for ${booking.planTitle}?',
+          style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Keep Booking', style: GoogleFonts.poppins(color: AppColors.textSecondary)),
+          ),
+          TextButton(
+            onPressed: () async {
+              await BookingService().updateBookingStatus(booking.id, 'Cancelled');
+              if (context.mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Booking cancelled successfully.')),
+                );
+              }
+            },
+            child: Text('Cancel Booking', style: GoogleFonts.poppins(color: AppColors.statusDanger, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

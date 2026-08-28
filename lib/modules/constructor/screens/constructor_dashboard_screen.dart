@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/palette.dart';
 import '../../../core/models/booking_model.dart';
+import '../../../core/models/house_plan_model.dart';
+import '../../../core/models/project_model.dart';
+import '../../../core/models/review_model.dart';
 import '../../../core/models/user_model.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/booking_service.dart';
+import '../../../core/services/house_plan_service.dart';
+import '../../../core/services/project_service.dart';
+import '../../../core/services/review_service.dart';
 import 'add_edit_house_plan_screen.dart';
 import 'add_edit_project_screen.dart';
 import 'company_profile_screen.dart';
@@ -15,7 +21,7 @@ class ConstructorDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final companyUid = FirebaseAuth.instance.currentUser?.uid ?? 'comp_1';
+    final companyUid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
     return StreamBuilder<UserModel?>(
       stream: AuthService().getUserData(),
@@ -52,50 +58,8 @@ class ConstructorDashboardScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Metrics Overview Grid
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildMetricCard(
-                        title: 'Active Bookings',
-                        value: '4',
-                        icon: Icons.assignment_turned_in,
-                        color: AppColors.secondary,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildMetricCard(
-                        title: 'House Plans',
-                        value: '6',
-                        icon: Icons.architecture,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildMetricCard(
-                        title: 'Completed Projects',
-                        value: '18',
-                        icon: Icons.business,
-                        color: AppColors.statusSuccess,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _buildMetricCard(
-                        title: 'Rating & Reviews',
-                        value: '4.9 ★',
-                        icon: Icons.star,
-                        color: AppColors.starRating,
-                      ),
-                    ),
-                  ],
-                ),
+                // Metrics Overview Grid - Live from Firestore
+                _buildLiveMetricsGrid(companyUid),
                 const SizedBox(height: 24),
 
                 // Quick Management Actions
@@ -182,6 +146,88 @@ class ConstructorDashboardScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildLiveMetricsGrid(String companyUid) {
+    return StreamBuilder<List<BookingModel>>(
+      stream: BookingService().getCompanyBookings(companyUid),
+      builder: (context, bookingSnap) {
+        final bookings = bookingSnap.data ?? [];
+        final activeBookings = bookings.where((b) => b.status != 'Cancelled' && b.status != 'Completed').length;
+
+        return StreamBuilder<List<HousePlanModel>>(
+          stream: HousePlanService().getCompanyHousePlans(companyUid),
+          builder: (context, planSnap) {
+            final plans = planSnap.data ?? [];
+
+            return StreamBuilder<List<ProjectModel>>(
+              stream: ProjectService().getProjects(companyId: companyUid),
+              builder: (context, projectSnap) {
+                final projects = projectSnap.data ?? [];
+
+                return StreamBuilder<List<ReviewModel>>(
+                  stream: ReviewService().getCompanyReviews(companyUid),
+                  builder: (context, reviewSnap) {
+                    final reviews = reviewSnap.data ?? [];
+                    final avgRating = reviews.isNotEmpty
+                        ? (reviews.map((r) => r.rating).reduce((a, b) => a + b) / reviews.length)
+                        : 0.0;
+
+                    return Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildMetricCard(
+                                title: 'Active Bookings',
+                                value: '$activeBookings',
+                                icon: Icons.assignment_turned_in,
+                                color: AppColors.secondary,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildMetricCard(
+                                title: 'House Plans',
+                                value: '${plans.length}',
+                                icon: Icons.architecture,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildMetricCard(
+                                title: 'Completed Projects',
+                                value: '${projects.length}',
+                                icon: Icons.business,
+                                color: AppColors.statusSuccess,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildMetricCard(
+                                title: 'Rating & Reviews',
+                                value: reviews.isNotEmpty ? '${avgRating.toStringAsFixed(1)} ★' : '0.0 ★',
+                                icon: Icons.star,
+                                color: AppColors.starRating,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildMetricCard({required String title, required String value, required IconData icon, required Color color}) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -260,7 +306,9 @@ class ConstructorDashboardScreen extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () async {
                       await BookingService().updateBookingStatus(booking.id, 'Cancelled');
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking request declined.')));
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking request declined.')));
+                      }
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.statusDanger,
@@ -275,7 +323,9 @@ class ConstructorDashboardScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       await BookingService().updateBookingStatus(booking.id, 'Confirmed');
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking request confirmed!')));
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking request confirmed!')));
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.secondary,

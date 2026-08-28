@@ -108,10 +108,58 @@ class UserProfileScreen extends StatelessWidget {
                 // -------------------------------------------------------------
                 // UI SECTION: Profile Settings & Preferences List
                 // -------------------------------------------------------------
-                _buildProfileOption(Icons.bookmark_outline, 'Saved House Plans', () {}),
-                _buildProfileOption(Icons.calculate_outlined, 'Saved Cost Estimates', () {}),
-                _buildProfileOption(Icons.notifications_none, 'Notification Preferences', () {}),
-                _buildProfileOption(Icons.help_outline, 'Help & Support', () {}),
+                _buildProfileOption(Icons.admin_panel_settings_outlined, 'Open Admin Panel', () async {
+                  if (user != null && user.role != 'admin') {
+                    await AuthService().updateUserRole(user.uid, 'admin');
+                  }
+                  if (context.mounted) {
+                    Navigator.pushNamed(context, '/admin');
+                  }
+                }),
+                _buildProfileOption(Icons.bookmark_outline, 'Saved House Plans', () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Saved plans feature coming soon.')),
+                  );
+                }),
+                _buildProfileOption(Icons.calculate_outlined, 'Saved Cost Estimates', () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Saved cost estimates feature coming soon.')),
+                  );
+                }),
+                _buildProfileOption(Icons.notifications_none, 'Notification Preferences', () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Notification preferences coming soon.')),
+                  );
+                }),
+                _buildProfileOption(Icons.help_outline, 'Help & Support', () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('Help & Support', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+                      content: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Need help?', style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14)),
+                            const SizedBox(height: 8),
+                            Text('Contact our support team:\nEmail: support@constructa.app\nPhone: +91 98765 43210', style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary)),
+                            const SizedBox(height: 16),
+                            Text('FAQ', style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14)),
+                            const SizedBox(height: 8),
+                            Text('Q: How do I book a service?\nA: Browse companies or house plans and tap "Book Service".\n\nQ: How do I cancel a booking?\nA: Go to My Bookings and tap "Cancel Booking".', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary, height: 1.5)),
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text('Close', style: GoogleFonts.poppins(color: AppColors.primary)),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
 
                 const SizedBox(height: 28),
 
