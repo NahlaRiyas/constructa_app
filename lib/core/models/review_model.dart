@@ -5,6 +5,9 @@ class ReviewModel {
   final String userAvatar;
   final String companyId;
   final String companyName;
+  final String targetId; // ID of the specific target being reviewed (Company ID, HousePlan ID, or Project ID)
+  final String targetType; // 'company', 'house_plan', or 'project'
+  final String targetTitle; // Title of the target (e.g., Company Name, House Plan Title, or Project Title)
   final double rating;
   final String comment;
   final String createdAt;
@@ -18,6 +21,9 @@ class ReviewModel {
     this.userAvatar = '',
     required this.companyId,
     required this.companyName,
+    required this.targetId,
+    required this.targetType,
+    required this.targetTitle,
     required this.rating,
     required this.comment,
     required this.createdAt,
@@ -33,6 +39,9 @@ class ReviewModel {
       'userAvatar': userAvatar,
       'companyId': companyId,
       'companyName': companyName,
+      'targetId': targetId,
+      'targetType': targetType,
+      'targetTitle': targetTitle,
       'rating': rating,
       'comment': comment,
       'createdAt': createdAt,
@@ -49,6 +58,9 @@ class ReviewModel {
       userAvatar: map['userAvatar'] ?? '',
       companyId: map['companyId'] ?? '',
       companyName: map['companyName'] ?? '',
+      targetId: map['targetId'] ?? map['companyId'] ?? '',
+      targetType: map['targetType'] ?? 'company',
+      targetTitle: map['targetTitle'] ?? map['companyName'] ?? '',
       rating: (map['rating'] ?? 5.0).toDouble(),
       comment: map['comment'] ?? '',
       createdAt: map['createdAt'] ?? '',

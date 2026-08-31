@@ -95,6 +95,18 @@ class ConstructorReviewsScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceLight,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              'Review for: ${review.targetTitle} (${review.targetType.replaceAll('_', ' ')})',
+              style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+            ),
+          ),
+          const SizedBox(height: 8),
           Text(review.comment, style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textPrimary)),
           const SizedBox(height: 10),
 

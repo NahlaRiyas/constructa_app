@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/palette.dart';
 import '../../../core/models/house_plan_model.dart';
+import '../../../core/models/review_model.dart';
+import '../../../core/services/review_service.dart';
 import 'book_service_screen.dart';
+import 'rate_review_screen.dart';
 
 class HousePlanDetailScreen extends StatelessWidget {
   final HousePlanModel plan;
@@ -128,6 +131,52 @@ class HousePlanDetailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
                   ],
+
+                  // Reviews Section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('User Reviews', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RateReviewScreen(
+                                companyId: plan.companyId,
+                                companyName: plan.companyName,
+                                targetId: plan.id,
+                                targetType: 'house_plan',
+                                targetTitle: plan.title,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Text('Write Review', style: GoogleFonts.poppins(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 13)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  StreamBuilder<List<ReviewModel>>(
+                    stream: ReviewService().getReviews(targetId: plan.id, targetType: 'house_plan'),
+                    builder: (context, snapshot) {
+                      final reviews = snapshot.data ?? [];
+                      if (reviews.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Text('No reviews for this plan yet.', style: GoogleFonts.poppins(color: AppColors.textSecondary, fontSize: 13)),
+                          ),
+                        );
+                      }
+
+                      return Column(
+                        children: reviews.map((rev) => _buildReviewCard(rev)).toList(),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -163,6 +212,55 @@ class HousePlanDetailScreen extends StatelessWidget {
             child: Text('Book Construction Service', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildReviewCard(ReviewModel review) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.cardBackground,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.borderLight),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: AppColors.surfaceLight,
+                backgroundImage: review.userAvatar.isNotEmpty ? NetworkImage(review.userAvatar) : null,
+                child: review.userAvatar.isEmpty ? const Icon(Icons.person, size: 18, color: AppColors.textSecondary) : null,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(review.userName, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
+                    Text(review.createdAt, style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
+                  ],
+                ),
+              ),
+              Row(
+                children: List.generate(
+                  5,
+                  (i) => Icon(
+                    Icons.star,
+                    size: 14,
+                    color: i < review.rating ? AppColors.starRating : AppColors.borderLight,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(review.comment, style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textPrimary)),
+        ],
       ),
     );
   }

@@ -244,8 +244,8 @@ class ConstructorDashboardScreen extends StatelessWidget {
         children: [
           Icon(icon, color: color, size: 28),
           const SizedBox(height: 10),
-          Text(value, style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-          Text(title, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
+          Text(value, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
         ],
       ),
     );
@@ -275,8 +275,8 @@ class ConstructorDashboardScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(booking.userName, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textPrimary)),
-                    Text(booking.userPhone, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
+                    Text(booking.userName, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textPrimary)),
+                    Text(booking.userPhone, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
                   ],
                 ),
               ),

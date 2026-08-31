@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/palette.dart';
 import '../../../core/models/user_model.dart';
 import '../../../core/services/auth_service.dart';
+import 'edit_user_profile_screen.dart';
 
 /// ============================================================================
 /// FILE: user_profile_screen.dart
@@ -108,12 +109,12 @@ class UserProfileScreen extends StatelessWidget {
                 // -------------------------------------------------------------
                 // UI SECTION: Profile Settings & Preferences List
                 // -------------------------------------------------------------
-                _buildProfileOption(Icons.admin_panel_settings_outlined, 'Open Admin Panel', () async {
-                  if (user != null && user.role != 'admin') {
-                    await AuthService().updateUserRole(user.uid, 'admin');
-                  }
-                  if (context.mounted) {
-                    Navigator.pushNamed(context, '/admin');
+                _buildProfileOption(Icons.person_outline, 'Edit Profile', () {
+                  if (user != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => EditUserProfileScreen(user: user)),
+                    );
                   }
                 }),
                 _buildProfileOption(Icons.bookmark_outline, 'Saved House Plans', () {

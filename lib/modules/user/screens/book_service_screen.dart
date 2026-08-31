@@ -145,10 +145,10 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Contractor', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
-                  Text(widget.companyName, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                  Text(widget.companyName, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primary)),
                   const Divider(height: 20),
                   Text('Selected House Plan / Service', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
-                  Text(widget.planTitle, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                  Text(widget.planTitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                 ],
               ),
             ),

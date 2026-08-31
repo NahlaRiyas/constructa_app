@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,22 +20,12 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    _controller.forward();
-
-    // Check auth status and navigate accordingly after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 2), () {
       if (mounted) {
-        if (FirebaseAuth.instance.currentUser != null) {
-          Navigator.pushReplacementNamed(context, '/home');
+        if (kIsWeb) {
+          Navigator.pushReplacementNamed(context, '/admin');
         } else {
-          Navigator.pushReplacementNamed(context, '/onboarding');
+          Navigator.pushReplacementNamed(context, '/home');
         }
       }
     });

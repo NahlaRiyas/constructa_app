@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../theme/palette.dart';
 import '../../../core/models/booking_model.dart';
 import '../../../core/services/booking_service.dart';
-import 'rate_project_screen.dart';
+import 'rate_review_screen.dart';
 
 class UserBookingsScreen extends StatelessWidget {
   const UserBookingsScreen({super.key});
@@ -95,6 +95,8 @@ class UserBookingsScreen extends StatelessWidget {
               Expanded(
                 child: Text(
                   booking.companyName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary),
                 ),
               ),
@@ -114,6 +116,8 @@ class UserBookingsScreen extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             booking.planTitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 12),
@@ -121,9 +125,13 @@ class UserBookingsScreen extends StatelessWidget {
             children: [
               const Icon(Icons.calendar_month, size: 16, color: AppColors.primary),
               const SizedBox(width: 6),
-              Text(
-                '${booking.bookingDate} at ${booking.timeSlot}',
-                style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
+              Expanded(
+                child: Text(
+                  '${booking.bookingDate} at ${booking.timeSlot}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
+                ),
               ),
             ],
           ),
@@ -167,7 +175,13 @@ class UserBookingsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RateProjectScreen(companyId: booking.companyId, companyName: booking.companyName),
+                          builder: (context) => RateReviewScreen(
+                            companyId: booking.companyId,
+                            companyName: booking.companyName,
+                            targetId: booking.companyId, // Default to company review from booking
+                            targetType: 'company',
+                            targetTitle: booking.companyName,
+                          ),
                         ),
                       );
                     } else if (booking.status == 'Pending' || booking.status == 'Confirmed') {

@@ -9,8 +9,9 @@ import '../../../core/services/house_plan_service.dart';
 import '../../../core/services/project_service.dart';
 import '../../../core/services/review_service.dart';
 import 'house_plan_detail_screen.dart';
+import 'project_detail_screen.dart';
 import 'book_service_screen.dart';
-import 'rate_project_screen.dart';
+import 'rate_review_screen.dart';
 
 class CompanyDetailScreen extends StatefulWidget {
   final CompanyModel company;
@@ -109,14 +110,14 @@ class _CompanyDetailScreenState extends State<CompanyDetailScreen> with SingleTi
                                   const Icon(Icons.verified, color: AppColors.primary, size: 20),
                               ],
                             ),
-                            Text(widget.company.specialty, style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary)),
+                            Text(widget.company.specialty, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary)),
                             const SizedBox(height: 4),
                             Row(
                               children: [
                                 const Icon(Icons.location_on, size: 14, color: AppColors.textSecondary),
                                 const SizedBox(width: 2),
-                                Text(widget.company.location, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
-                                const Spacer(),
+                                Expanded(child: Text(widget.company.location, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary))),
+                                const SizedBox(width: 8),
                                 const Icon(Icons.star, color: AppColors.starRating, size: 16),
                                 Text(' ${widget.company.rating} ', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
                                 Text('(${widget.company.reviewCount})', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
@@ -162,7 +163,13 @@ class _CompanyDetailScreenState extends State<CompanyDetailScreen> with SingleTi
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => RateProjectScreen(companyId: widget.company.id, companyName: widget.company.name),
+                              builder: (context) => RateReviewScreen(
+                                companyId: widget.company.id,
+                                companyName: widget.company.name,
+                                targetId: widget.company.id,
+                                targetType: 'company',
+                                targetTitle: widget.company.name,
+                              ),
                             ),
                           );
                         },
@@ -229,55 +236,63 @@ class _CompanyDetailScreenState extends State<CompanyDetailScreen> with SingleTi
           itemCount: projects.length,
           itemBuilder: (context, index) {
             final proj = projects[index];
-            return Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.borderLight),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (proj.imageUrls.isNotEmpty)
-                    ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                      child: Image.network(
-                        proj.imageUrls.first,
-                        height: 160,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProjectDetailScreen(project: proj)),
+                );
+              },
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: AppColors.cardBackground,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.borderLight),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (proj.imageUrls.isNotEmpty)
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                        child: Image.network(
+                          proj.imageUrls.first,
+                          height: 160,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(proj.title, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary)),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surfaceLight,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(proj.category, style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                              ),
+                              const Spacer(),
+                              Text(proj.completionDate, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
+                            ],
+                          ),
+                          if (proj.description.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            Text(proj.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
+                          ],
+                        ],
                       ),
                     ),
-                  Padding(
-                    padding: const EdgeInsets.all(14),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(proj.title, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary)),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: AppColors.surfaceLight,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(proj.category, style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.primary)),
-                            ),
-                            const Spacer(),
-                            Text(proj.completionDate, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
-                          ],
-                        ),
-                        if (proj.description.isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Text(proj.description, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },
@@ -335,92 +350,141 @@ class _CompanyDetailScreenState extends State<CompanyDetailScreen> with SingleTi
   }
 
   Widget _buildReviewsTab() {
-    return StreamBuilder<List<ReviewModel>>(
-      stream: ReviewService().getCompanyReviews(widget.company.id),
-      builder: (context, snapshot) {
-        final reviews = snapshot.data ?? [];
-        if (reviews.isEmpty) {
-          return Center(child: Text('No reviews yet. Be the first to leave a review!', style: GoogleFonts.poppins(color: AppColors.textSecondary)));
-        }
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: reviews.length,
-          itemBuilder: (context, index) {
-            final rev = reviews[index];
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.borderLight),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 18,
-                        backgroundColor: AppColors.surfaceLight,
-                        backgroundImage: rev.userAvatar.isNotEmpty ? NetworkImage(rev.userAvatar) : null,
-                        child: rev.userAvatar.isEmpty ? const Icon(Icons.person, size: 18, color: AppColors.textSecondary) : null,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      children: [
+        // Padding(
+        //   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+        //   child: SizedBox(
+        //     width: double.infinity,
+        //     child: ElevatedButton.icon(
+        //       onPressed: () {
+        //         Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //             builder: (context) => RateReviewScreen(
+        //               companyId: widget.company.id,
+        //               companyName: widget.company.name,
+        //               targetId: widget.company.id,
+        //               targetType: 'company',
+        //               targetTitle: widget.company.name,
+        //             ),
+        //           ),
+        //         );
+        //       },
+        //       icon: const Icon(Icons.rate_review_outlined, color: Colors.white, size: 20),
+        //       label: Text('Write a Review for ${widget.company.name}', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white)),
+        //       style: ElevatedButton.styleFrom(
+        //         backgroundColor: AppColors.secondary,
+        //         padding: const EdgeInsets.symmetric(vertical: 14),
+        //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        Expanded(
+          child: StreamBuilder<List<ReviewModel>>(
+            stream: ReviewService().getCompanyReviews(widget.company.id),
+            builder: (context, snapshot) {
+              final reviews = snapshot.data ?? [];
+              if (reviews.isEmpty) {
+                return Center(child: Text('No reviews yet. Be the first to leave a review!', style: GoogleFonts.poppins(color: AppColors.textSecondary)));
+              }
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                itemCount: reviews.length,
+                itemBuilder: (context, index) {
+                  final rev = reviews[index];
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBackground,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppColors.borderLight),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            Text(rev.userName, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
-                            Text(rev.createdAt, style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
+                            CircleAvatar(
+                              radius: 18,
+                              backgroundColor: AppColors.surfaceLight,
+                              backgroundImage: rev.userAvatar.isNotEmpty ? NetworkImage(rev.userAvatar) : null,
+                              child: rev.userAvatar.isEmpty ? const Icon(Icons.person, size: 18, color: AppColors.textSecondary) : null,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(rev.userName, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
+                                  Text(rev.createdAt, style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              children: List.generate(
+                                5,
+                                (i) => Icon(
+                                  Icons.star,
+                                  size: 14,
+                                  color: i < rev.rating ? AppColors.starRating : AppColors.borderLight,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      Row(
-                        children: List.generate(
-                          5,
-                          (i) => Icon(
-                            Icons.star,
-                            size: 14,
-                            color: i < rev.rating ? AppColors.starRating : AppColors.borderLight,
+                        if (rev.targetType != 'company') ...[
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceLight,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'Review for: ${rev.targetTitle}',
+                              style: GoogleFonts.poppins(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(rev.comment, style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textPrimary)),
-
-                  if (rev.response.isNotEmpty) ...[
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceLight,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text('Company Response', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 11, color: AppColors.primary)),
-                              const Spacer(),
-                              Text(rev.responseDate, style: GoogleFonts.poppins(fontSize: 10, color: AppColors.textSecondary)),
-                            ],
-                          ),
-                          const SizedBox(height: 2),
-                          Text(rev.response, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
                         ],
-                      ),
+                        const SizedBox(height: 8),
+                        Text(rev.comment, style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textPrimary)),
+
+                        if (rev.response.isNotEmpty) ...[
+                          const SizedBox(height: 10),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceLight,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('Company Response', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 11, color: AppColors.primary)),
+                                    const Spacer(),
+                                    Text(rev.responseDate, style: GoogleFonts.poppins(fontSize: 10, color: AppColors.textSecondary)),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Text(rev.response, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                  ],
-                ],
-              ),
-            );
-          },
-        );
-      },
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

@@ -174,9 +174,13 @@ class AuthService {
       print("AuthService: User created in Firebase Auth with UID: ${userCredential.user?.uid}");
 
       if (userCredential.user != null) {
+        // Update Firebase User Profile (for display name and photo)
+        await userCredential.user!.updateDisplayName(fullName);
+
         String imageUrl = '';
         if (profileImage != null) {
           imageUrl = await uploadImage(profileImage, userCredential.user!.uid);
+          await userCredential.user!.updatePhotoURL(imageUrl);
         }
 
         UserModel userModel = UserModel(
@@ -204,6 +208,44 @@ class AuthService {
       return userCredential;
     } catch (e) {
       print("AuthService: General error in signUp: $e");
+      rethrow;
+    }
+  }
+
+  /// Updates the user's profile information in Firestore and Auth.
+  Future<void> updateUserProfile({
+    required String uid,
+    required String fullName,
+    required String phoneNumber,
+    String? email,
+    File? profileImage,
+  }) async {
+    try {
+      // 1. Update Email in Firebase Auth if provided and different
+      if (email != null && email.isNotEmpty && email != _auth.currentUser?.email) {
+        await _auth.currentUser?.updateEmail(email);
+      }
+
+      // 2. Handle Image Upload
+      String imageUrl = '';
+      if (profileImage != null) {
+        imageUrl = await uploadImage(profileImage, uid);
+      }
+
+      // 3. Update Firestore Document
+      Map<String, dynamic> updates = {
+        'fullName': fullName,
+        'phoneNumber': phoneNumber,
+      };
+
+      if (email != null) updates['email'] = email;
+      if (imageUrl.isNotEmpty) {
+        updates['profileImageUrl'] = imageUrl;
+      }
+
+      await _firestore.collection('users').doc(uid).update(updates);
+    } catch (e) {
+      print("AuthService: Update profile error: $e");
       rethrow;
     }
   }

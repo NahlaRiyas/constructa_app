@@ -83,7 +83,7 @@ class AdminReviewsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(review.userName, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textPrimary)),
-                    Text('for ${review.companyName}', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
+                    Text('for: ${review.targetTitle} (${review.targetType})', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
                   ],
                 ),
               ),

@@ -43,8 +43,8 @@ class AuthWrapper extends StatelessWidget {
 
             final userModel = userSnapshot.data;
 
-            // Admin role (check role field or email containing 'admin')
-            if (userModel?.role == 'admin' || (userModel?.email != null && userModel!.email.toLowerCase().contains('admin'))) {
+            // Admin role (strictly check role field from Firestore)
+            if (userModel?.role == 'admin') {
               return const AdminShell();
             }
 

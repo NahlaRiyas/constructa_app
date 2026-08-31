@@ -460,12 +460,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 // UI SECTION: Top Rated Companies Section (StreamBuilder)
                 // -------------------------------------------------------------
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text('Top Rated Companies', style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                    Text('Top Rated Companies', style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
                     TextButton(
                       onPressed: () => Navigator.pushNamed(context, '/companies'),
-                      child: Text('View All', style: GoogleFonts.inter(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 13)),
+                      child: Text('View All', style: GoogleFonts.inter(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 12)),
                     ),
                   ],
                 ),
@@ -570,141 +570,141 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 // -------------------------------------------------------------
                 // UI SECTION: Recommended for You (Interactive Bento Grid)
                 // -------------------------------------------------------------
-                Text('Recommended for You', style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-                const SizedBox(height: 14),
-
-                Column(
-                  children: [
-                    // Hero Bento Card (Site Inspection Booking)
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryContainer,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: const [
-                          BoxShadow(color: AppColors.shadowColor, blurRadius: 10, offset: Offset(0, 4)),
-                        ],
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            right: -10,
-                            bottom: -10,
-                            child: Icon(Icons.architecture, size: 120, color: Colors.white.withOpacity(0.12)),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(color: AppColors.secondaryContainer, borderRadius: BorderRadius.circular(10)),
-                                child: const Icon(Icons.handyman, color: AppColors.onSecondaryContainer, size: 24),
-                              ),
-                              const SizedBox(height: 12),
-                              Text('Expert Site Inspection', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-                              const SizedBox(height: 4),
-                              Text('Schedule a professional site visit for your new project.', style: GoogleFonts.inter(fontSize: 13, color: AppColors.onPrimaryContainer)),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const BookServiceScreen(
-                                      companyId: '',
-                                      companyName: '',
-                                      planId: '',
-                                      planTitle: 'Site Inspection Consultation',
-                                    )),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.primary,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                ),
-                                child: Text('Book Now', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13)),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Side-by-side Interactive Bento Feature Cards
-                    Row(
-                      children: [
-                        // Cost Calculator Card Trigger
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => _showCostCalculatorModal(context),
-                            child: Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: AppColors.secondaryContainer,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Text('Cost Calculator', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.onSecondaryContainer)),
-                                      ),
-                                      const Icon(Icons.calculate, color: AppColors.onSecondaryContainer, size: 20),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Estimate material & labor costs instantly.',
-                                    style: GoogleFonts.inter(fontSize: 12, color: AppColors.onSecondaryContainer.withOpacity(0.8)),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-
-                        // Virtual Tour Card Trigger
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => _showVirtualTourModal(context),
-                            child: Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: AppColors.tertiaryFixed,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Text('Virtual Tour', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.onTertiaryFixed)),
-                                      ),
-                                      const Icon(Icons.video_library_outlined, color: AppColors.onTertiaryFixed, size: 20),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Experience home plan in 3D.',
-                                    style: GoogleFonts.inter(fontSize: 12, color: AppColors.onTertiaryFixedVariant),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                // Text('Recommended for You', style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                // const SizedBox(height: 14),
+                //
+                // Column(
+                //   children: [
+                //     // Hero Bento Card (Site Inspection Booking)
+                //     Container(
+                //       width: double.infinity,
+                //       padding: const EdgeInsets.all(20),
+                //       decoration: BoxDecoration(
+                //         color: AppColors.primaryContainer,
+                //         borderRadius: BorderRadius.circular(20),
+                //         boxShadow: const [
+                //           BoxShadow(color: AppColors.shadowColor, blurRadius: 10, offset: Offset(0, 4)),
+                //         ],
+                //       ),
+                //       child: Stack(
+                //         children: [
+                //           Positioned(
+                //             right: -10,
+                //             bottom: -10,
+                //             child: Icon(Icons.architecture, size: 120, color: Colors.white.withOpacity(0.12)),
+                //           ),
+                //           Column(
+                //             crossAxisAlignment: CrossAxisAlignment.start,
+                //             children: [
+                //               Container(
+                //                 padding: const EdgeInsets.all(8),
+                //                 decoration: BoxDecoration(color: AppColors.secondaryContainer, borderRadius: BorderRadius.circular(10)),
+                //                 child: const Icon(Icons.handyman, color: AppColors.onSecondaryContainer, size: 24),
+                //               ),
+                //               const SizedBox(height: 12),
+                //               Text('Expert Site Inspection', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                //               const SizedBox(height: 4),
+                //               Text('Schedule a professional site visit for your new project.', style: GoogleFonts.inter(fontSize: 13, color: AppColors.onPrimaryContainer)),
+                //               const SizedBox(height: 16),
+                //               ElevatedButton(
+                //                 onPressed: () {
+                //                   Navigator.push(
+                //                     context,
+                //                     MaterialPageRoute(builder: (context) => const BookServiceScreen(
+                //                       companyId: '',
+                //                       companyName: '',
+                //                       planId: '',
+                //                       planTitle: 'Site Inspection Consultation',
+                //                     )),
+                //                   );
+                //                 },
+                //                 style: ElevatedButton.styleFrom(
+                //                   backgroundColor: Colors.white,
+                //                   foregroundColor: AppColors.primary,
+                //                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                //                 ),
+                //                 child: Text('Book Now', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13)),
+                //               ),
+                //             ],
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //     const SizedBox(height: 12),
+                //
+                //     // Side-by-side Interactive Bento Feature Cards
+                //     Row(
+                //       children: [
+                //         // Cost Calculator Card Trigger
+                //         Expanded(
+                //           child: GestureDetector(
+                //             onTap: () => _showCostCalculatorModal(context),
+                //             child: Container(
+                //               padding: const EdgeInsets.all(16),
+                //               decoration: BoxDecoration(
+                //                 color: AppColors.secondaryContainer,
+                //                 borderRadius: BorderRadius.circular(16),
+                //               ),
+                //               child: Column(
+                //                 crossAxisAlignment: CrossAxisAlignment.start,
+                //                 children: [
+                //                   Row(
+                //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //                     children: [
+                //                       Expanded(
+                //                         child: Text('Cost Calculator', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.onSecondaryContainer)),
+                //                       ),
+                //                       const Icon(Icons.calculate, color: AppColors.onSecondaryContainer, size: 20),
+                //                     ],
+                //                   ),
+                //                   const SizedBox(height: 8),
+                //                   Text(
+                //                     'Estimate material & labor costs instantly.',
+                //                     style: GoogleFonts.inter(fontSize: 12, color: AppColors.onSecondaryContainer.withOpacity(0.8)),
+                //                   ),
+                //                 ],
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                //         const SizedBox(width: 12),
+                //
+                //         // Virtual Tour Card Trigger
+                //         Expanded(
+                //           child: GestureDetector(
+                //             onTap: () => _showVirtualTourModal(context),
+                //             child: Container(
+                //               padding: const EdgeInsets.all(16),
+                //               decoration: BoxDecoration(
+                //                 color: AppColors.tertiaryFixed,
+                //                 borderRadius: BorderRadius.circular(16),
+                //               ),
+                //               child: Column(
+                //                 crossAxisAlignment: CrossAxisAlignment.start,
+                //                 children: [
+                //                   Row(
+                //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //                     children: [
+                //                       Expanded(
+                //                         child: Text('Virtual Tour', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.onTertiaryFixed)),
+                //                       ),
+                //                       const Icon(Icons.video_library_outlined, color: AppColors.onTertiaryFixed, size: 20),
+                //                     ],
+                //                   ),
+                //                   const SizedBox(height: 8),
+                //                   Text(
+                //                     'Experience home plan in 3D.',
+                //                     style: GoogleFonts.inter(fontSize: 12, color: AppColors.onTertiaryFixedVariant),
+                //                   ),
+                //                 ],
+                //               ),
+                //             ),
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   ],
+                // ),
                 const SizedBox(height: 20),
               ],
             ),
@@ -760,14 +760,14 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(company.name, style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary)),
+                      Text(company.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary)),
                       const SizedBox(height: 4),
                       Row(
                         children: [
                           const Icon(Icons.star, color: AppColors.starRating, size: 16),
                           const SizedBox(width: 4),
                           Text('${company.rating} ', style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
-                          Text('(${company.reviewCount} reviews)', style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 12)),
+                          Flexible(child: Text('(${company.reviewCount} reviews)', maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 12))),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -775,7 +775,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         children: [
                           const Icon(Icons.location_on, size: 14, color: AppColors.textSecondary),
                           const SizedBox(width: 2),
-                          Text(company.location, style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 12)),
+                          Expanded(child: Text(company.location, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 12))),
                         ],
                       ),
                     ],
@@ -840,7 +840,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           ),
           const SizedBox(height: 8),
           Text(plan.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textPrimary)),
-          Text('${plan.bhk} • ${plan.sqft} sq.ft', style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+          Text('${plan.bhk} • ${plan.sqft} sq.ft', maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
         ],
       ),
     );

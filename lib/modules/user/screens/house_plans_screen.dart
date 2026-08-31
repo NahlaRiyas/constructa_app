@@ -155,10 +155,12 @@ class _HousePlansScreenState extends State<HousePlansScreen> {
                 children: [
                   Text(plan.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
                   const SizedBox(height: 2),
-                  Text('${plan.bhk} • ${plan.sqft} sq.ft', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
+                  Text('${plan.bhk} • ${plan.sqft} sq.ft', maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
                   const SizedBox(height: 4),
                   Text(
                     '₹${(plan.contractPrice/100000).toStringAsFixed(1)} Lakhs',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.primary),
                   ),
                 ],

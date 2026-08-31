@@ -4,20 +4,28 @@ import '../models/review_model.dart';
 class ReviewService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Stream reviews for a company strictly from Firestore
-  Stream<List<ReviewModel>> getCompanyReviews(String companyId) {
-    if (companyId.isEmpty) {
-      return _firestore.collection('reviews').snapshots().map((snapshot) {
-        return snapshot.docs.map((doc) => ReviewModel.fromMap(doc.data(), doc.id)).toList();
-      });
+  // Stream reviews for a specific target strictly from Firestore
+  Stream<List<ReviewModel>> getReviews({String? companyId, String? targetId, String? targetType}) {
+    Query query = _firestore.collection('reviews');
+
+    if (companyId != null && companyId.isNotEmpty) {
+      query = query.where('companyId', isEqualTo: companyId);
     }
-    return _firestore
-        .collection('reviews')
-        .where('companyId', isEqualTo: companyId)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs.map((doc) => ReviewModel.fromMap(doc.data(), doc.id)).toList();
+    if (targetId != null && targetId.isNotEmpty) {
+      query = query.where('targetId', isEqualTo: targetId);
+    }
+    if (targetType != null && targetType.isNotEmpty) {
+      query = query.where('targetType', isEqualTo: targetType);
+    }
+
+    return query.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => ReviewModel.fromMap(doc.data() as Map<String, dynamic>, doc.id)).toList();
     });
+  }
+
+  // Legacy support for getCompanyReviews - now returns ALL reviews for the company
+  Stream<List<ReviewModel>> getCompanyReviews(String companyId) {
+    return getReviews(companyId: companyId);
   }
 
   // Add review (Customer API action)
