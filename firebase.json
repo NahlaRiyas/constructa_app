@@ -1,1 +1,5 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"constructa-app-36e5d","appId":"1:309765575205:android:9a86e0c7e628ac79e1e5cc","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"constructa-app-36e5d","configurations":{"android":"1:309765575205:android:9a86e0c7e628ac79e1e5cc"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}
