@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/palette.dart';
+import '../../../services/auth_service.dart';
 import '../utils/global.dart';
 
 
@@ -14,6 +15,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
   bool _isSubmitted = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -21,16 +23,35 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     super.dispose();
   }
 
-  void _handleSubmit() {
-    if (_emailController.text.trim().isEmpty) {
+  Future<void> _handleSubmit() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter your email address')),
       );
       return;
     }
-    setState(() {
-      _isSubmitted = true;
-    });
+
+    setState(() => _isLoading = true);
+
+    try {
+      await AuthService().resetPassword(email);
+      if (mounted) {
+        setState(() {
+          _isSubmitted = true;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send reset email: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -79,7 +100,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.25),
+                          color: AppColors.primary.withValues(alpha: 0.25),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -188,7 +209,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       width: double.infinity,
                       height: height * 0.06,
                       child: ElevatedButton(
-                        onPressed: _handleSubmit,
+                        onPressed: _isLoading ? null : _handleSubmit,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           foregroundColor: AppColors.textLight,
@@ -197,20 +218,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Send Reset Link',
-                              style: GoogleFonts.poppins(
-                                fontSize: w * 0.035,
-                                fontWeight: FontWeight.bold,
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Send Reset Link',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: w * 0.035,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(width: w * 0.02),
+                                  Icon(Icons.arrow_forward, size: w * 0.045),
+                                ],
                               ),
-                            ),
-                            SizedBox(width: w * 0.02),
-                            Icon(Icons.arrow_forward, size: w * 0.045),
-                          ],
-                        ),
                       ),
                     ),
                   ] else ...[

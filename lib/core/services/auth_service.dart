@@ -130,6 +130,37 @@ class AuthService {
     await _auth.sendPasswordResetEmail(email: email);
   }
 
+  /// Changes password for the currently authenticated user by re-authenticating with [currentPassword]
+  /// and updating to [newPassword].
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    User? user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No active authenticated user found. Please log in again.',
+      );
+    }
+
+    if (user.email == null || user.email!.isEmpty) {
+      throw FirebaseAuthException(
+        code: 'no-email',
+        message: 'Current user does not have a registered email address.',
+      );
+    }
+
+    // Re-authenticate user credentials first
+    AuthCredential credential = EmailAuthProvider.credential(
+      email: user.email!,
+      password: currentPassword,
+    );
+
+    await user.reauthenticateWithCredential(credential);
+    await user.updatePassword(newPassword);
+  }
+
   // ---------------------------------------------------------------------------
   // AUTHENTICATION: SIGNUP & USER PROFILE SECTION
   // ---------------------------------------------------------------------------

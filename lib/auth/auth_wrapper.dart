@@ -48,7 +48,8 @@ class AuthWrapper extends StatelessWidget {
               return const AdminShell();
             }
 
-            if (userModel?.role == 'company' || userModel?.role == 'constructor') {
+            if (userModel?.role == 'company' ||
+                userModel?.role == 'constructor') {
               return const ConstructorMainNavigationShell();
             }
 
