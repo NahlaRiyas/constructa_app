@@ -197,6 +197,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           // If login with provided password fails
         }
 
+        if (!mounted) return;
         // Show helpful dialog
         showDialog(
           context: context,
@@ -228,6 +229,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         );
       } else {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text('Sign up failed: ${e.message ?? e.toString()}')),
@@ -672,6 +674,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   SizedBox(height: height * 0.02),
+
+                  // Divider
+                  Row(
+                    children: [
+                      const Expanded(child: Divider(color: AppColors.borderLight)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text('OR CONTINUE WITH', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
+                      ),
+                      const Expanded(child: Divider(color: AppColors.borderLight)),
+                    ],
+                  ),
+                  SizedBox(height: height * 0.02),
+
+                  // Google Sign-Up Button
+                  OutlinedButton.icon(
+                    onPressed: _isLoading ? null : _handleGoogleSignUp,
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: Size(double.infinity, height * 0.055),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      side: const BorderSide(color: AppColors.borderLight),
+                    ),
+                    icon: const Icon(Icons.g_mobiledata, size: 28, color: AppColors.primary),
+                    label: Text('Google Sign Up', style: GoogleFonts.poppins(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w500)),
+                  ),
+                  SizedBox(height: height * 0.025),
 
                   // -----------------------------------------------------------
                   // UI SECTION: Navigation Link to Login Screen

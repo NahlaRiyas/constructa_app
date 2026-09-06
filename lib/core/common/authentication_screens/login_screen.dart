@@ -78,7 +78,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // Responsive card and padding calculations using MediaQuery dimensions (w and height)
     final double cardWidth = w > 500 ? 440 : w * 0.92;
-    final double horizontalPadding = w > 400 ? 24.0 : 16.0;
 
     return Scaffold(
       backgroundColor: AppColors.background,

@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../theme/palette.dart';
 import '../../../core/models/house_plan_model.dart';
 import '../../../core/services/house_plan_service.dart';
 import '../../../core/services/auth_service.dart';
+import '../../../core/services/media_upload_service.dart';
+import '../../../core/common/utils/multi_image_picker_field.dart';
 
 class AddEditHousePlanScreen extends StatefulWidget {
   final HousePlanModel? plan;
@@ -20,9 +23,13 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
   final _sqftController = TextEditingController();
   final _priceController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _imageUrlController = TextEditingController();
+
+  List<String> _existingImageUrls = [];
+  List<XFile> _newImageFiles = [];
+
   String _selectedTag = 'Bestseller';
   bool _isLoading = false;
+  String _uploadStatus = '';
 
   @override
   void initState() {
@@ -33,11 +40,21 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
       _sqftController.text = widget.plan!.sqft.toString();
       _priceController.text = widget.plan!.contractPrice.toString();
       _descriptionController.text = widget.plan!.description;
-      _imageUrlController.text = widget.plan!.imageUrls.isNotEmpty ? widget.plan!.imageUrls.first : '';
+      _existingImageUrls = List.from(widget.plan!.imageUrls);
       if (widget.plan!.tag.isNotEmpty) {
         _selectedTag = widget.plan!.tag;
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _bhkController.dispose();
+    _sqftController.dispose();
+    _priceController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   Future<void> _savePlan() async {
@@ -48,12 +65,36 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
       return;
     }
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _uploadStatus = 'Preparing architectural designs...';
+    });
 
     try {
       final user = FirebaseAuth.instance.currentUser;
       final userDoc = await AuthService().getUserData().first;
       final companyName = (userDoc?.fullName.isNotEmpty == true) ? userDoc!.fullName : 'BuildWell Constructions';
+
+      // Upload newly picked images (with automatic compression to <= 3MB)
+      List<String> newlyUploadedUrls = [];
+      if (_newImageFiles.isNotEmpty) {
+        newlyUploadedUrls = await MediaUploadService().uploadMultipleImages(
+          _newImageFiles,
+          onProgress: (current, total) {
+            if (mounted) {
+              setState(() {
+                _uploadStatus = 'Compressing & uploading plan $current of $total...';
+              });
+            }
+          },
+        );
+      }
+
+      final allImageUrls = [..._existingImageUrls, ...newlyUploadedUrls];
+
+      setState(() {
+        _uploadStatus = 'Saving house plan to database...';
+      });
 
       final plan = HousePlanModel(
         id: widget.plan?.id ?? '',
@@ -64,7 +105,7 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
         sqft: int.tryParse(_sqftController.text.trim()) ?? 2000,
         contractPrice: double.tryParse(_priceController.text.trim()) ?? 4500000,
         description: _descriptionController.text.trim(),
-        imageUrls: _imageUrlController.text.trim().isNotEmpty ? [_imageUrlController.text.trim()] : [],
+        imageUrls: allImageUrls,
         tag: _selectedTag,
         features: ['Solar Ready', 'Car Porch', 'Modular Kitchen'],
       );
@@ -85,8 +126,8 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
             builder: (ctx) => AlertDialog(
               title: const Text('Firestore Permission Error'),
               content: const Text(
-                'Firestore denied permission to create the house plan.\n\n'
-                'Please update your Firestore Security Rules in the Firebase Console to allow write access:\n'
+                'Firestore denied permission to save the house plan.\n\n'
+                'Please update your Firestore Security Rules in Firebase Console to allow write access:\n'
                 'allow read, write: if request.auth != null;',
               ),
               actions: [
@@ -108,7 +149,10 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
       }
     } finally {
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(() {
+          _isLoading = false;
+          _uploadStatus = '';
+        });
       }
     }
   }
@@ -212,7 +256,7 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
             Text('Badge Tag', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
             const SizedBox(height: 4),
             DropdownButtonFormField<String>(
-              value: _selectedTag,
+              initialValue: _selectedTag,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: AppColors.cardBackground,
@@ -223,21 +267,20 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
               }).toList(),
               onChanged: (val) => setState(() => _selectedTag = val ?? 'Bestseller'),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
 
-            Text('House Plan Image URL', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-            const SizedBox(height: 4),
-            TextField(
-              controller: _imageUrlController,
-              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
-              decoration: InputDecoration(
-                hintText: 'https://...',
-                filled: true,
-                fillColor: AppColors.cardBackground,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-              ),
+            // Multi-Image Picker Field
+            MultiImagePickerField(
+              title: 'House Plan Blueprints & 3D Renderings',
+              subtitle: 'Upload multiple floor plans, 2D blueprints, elevation renders & layouts. Auto-compressed to ≤ 3MB.',
+              initialUrls: _existingImageUrls,
+              initialFiles: _newImageFiles,
+              onChanged: (existing, newFiles) {
+                _existingImageUrls = existing;
+                _newImageFiles = newFiles;
+              },
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
 
             Text('Description & Highlights', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
             const SizedBox(height: 4),
@@ -254,6 +297,19 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
             ),
             const SizedBox(height: 24),
 
+            // Upload Status text if loading
+            if (_isLoading && _uploadStatus.isNotEmpty) ...[
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    _uploadStatus,
+                    style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.secondary),
+                  ),
+                ),
+              ),
+            ],
+
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -264,8 +320,15 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : Text(widget.plan == null ? 'Publish House Plan' : 'Save Plan Changes', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : Text(
+                        widget.plan == null ? 'Publish House Plan' : 'Save Plan Changes',
+                        style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
               ),
             ),
           ],

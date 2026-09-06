@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/palette.dart';
 import '../../../core/models/house_plan_model.dart';
 import '../../../core/services/house_plan_service.dart';
+import '../../../core/common/utils/fullscreen_image_viewer.dart';
 import 'add_edit_house_plan_screen.dart';
 
 class ManageHousePlansScreen extends StatelessWidget {
@@ -78,18 +79,65 @@ class ManageHousePlansScreen extends StatelessWidget {
                   color: AppColors.cardBackground,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.borderLight),
+                  boxShadow: const [
+                    BoxShadow(color: AppColors.shadowColor, blurRadius: 6, offset: Offset(0, 3)),
+                  ],
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Row(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          plan.imageUrls.isNotEmpty ? plan.imageUrls.first : 'https://lh3.googleusercontent.com/aida-public/AB6AXuBQf65MSyJMwDSMBqTZOeY2TZ9QCFHql7Nqw50bZxUIBlsUGsL--5Dtccr8cXPXpPbKCOSVR9ubcV5g-zWVbMZFrJfaFeR4imxUXDnur-YzSnn7btzqd-8AnKbYoKsKzbJy1qNgTlYI5gkWUISP-oBynzQi_0RypArQCSfl_Xji23jKSNKyUYZVlt5wojNK9TG4quf2TR86xsRg-tHg9sUpynJDDz4XIaIxJgLYP6mho99U7StyO99v',
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
+                      GestureDetector(
+                        onTap: () {
+                          if (plan.imageUrls.isNotEmpty) {
+                            FullscreenImageViewer.open(
+                              context,
+                              imageUrls: plan.imageUrls,
+                              title: plan.title,
+                            );
+                          }
+                        },
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: plan.imageUrls.isNotEmpty
+                                  ? Image.network(
+                                      plan.imageUrls.first,
+                                      width: 84,
+                                      height: 84,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) => Container(
+                                        width: 84,
+                                        height: 84,
+                                        color: AppColors.surfaceLight,
+                                        child: const Icon(Icons.broken_image, color: AppColors.textMuted),
+                                      ),
+                                    )
+                                  : Container(
+                                      width: 84,
+                                      height: 84,
+                                      color: AppColors.surfaceLight,
+                                      child: const Icon(Icons.architecture, color: AppColors.secondary),
+                                    ),
+                            ),
+                            if (plan.imageUrls.length > 1)
+                              Positioned(
+                                bottom: 4,
+                                right: 4,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.75),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    '${plan.imageUrls.length}',
+                                    style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 14),
@@ -100,12 +148,13 @@ class ManageHousePlansScreen extends StatelessWidget {
                             Text(plan.title, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary)),
                             Text('${plan.bhk} • ${plan.sqft} sq.ft', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
                             const SizedBox(height: 4),
-                            Text('₹${(plan.contractPrice/100000).toStringAsFixed(1)} Lakhs', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.secondary)),
+                            Text('₹${(plan.contractPrice / 100000).toStringAsFixed(1)} Lakhs', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.secondary)),
                           ],
                         ),
                       ),
                       IconButton(
                         icon: const Icon(Icons.edit_outlined, color: AppColors.primary),
+                        tooltip: 'Edit Plan',
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -115,10 +164,8 @@ class ManageHousePlansScreen extends StatelessWidget {
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete_outline, color: AppColors.statusDanger),
-                        onPressed: () async {
-                          await HousePlanService().deleteHousePlan(plan.id);
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('House plan deleted.')));
-                        },
+                        tooltip: 'Delete Plan',
+                        onPressed: () => _confirmDelete(context, plan),
                       ),
                     ],
                   ),
@@ -137,6 +184,29 @@ class ManageHousePlansScreen extends StatelessWidget {
         },
         backgroundColor: AppColors.secondary,
         child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+
+  void _confirmDelete(BuildContext context, HousePlanModel plan) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Delete House Plan', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+        content: Text('Are you sure you want to delete "${plan.title}"?', style: GoogleFonts.poppins(fontSize: 14)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              await HousePlanService().deleteHousePlan(plan.id);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('House plan deleted successfully.')));
+              }
+            },
+            child: const Text('Delete', style: TextStyle(color: AppColors.statusDanger)),
+          ),
+        ],
       ),
     );
   }

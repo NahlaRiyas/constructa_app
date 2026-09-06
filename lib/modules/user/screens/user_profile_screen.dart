@@ -203,16 +203,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 _buildSectionHeader('Preferences & Settings'),
                 const SizedBox(height: 8),
 
-                // _buildProfileOption(
-                //   icon: Icons.notifications_none_outlined,
-                //   title: 'Notification Preferences',
-                //   subtitle: 'Manage alerts, booking updates & emails',
-                //   cardBg: cardBg,
-                //   textColor: textColor,
-                //   subTextColor: subTextColor,
-                //   borderColor: borderColor,
-                //   onTap: _showNotificationPreferencesBottomSheet,
-                // ),
+                _buildProfileOption(
+                  icon: Icons.notifications_none_outlined,
+                  title: 'Notification Preferences',
+                  subtitle: 'Manage alerts, booking updates & emails',
+                  cardBg: cardBg,
+                  textColor: textColor,
+                  subTextColor: subTextColor,
+                  borderColor: borderColor,
+                  onTap: _showNotificationPreferencesBottomSheet,
+                ),
 
                 _buildProfileOption(
                   icon: Icons.palette_outlined,
@@ -338,39 +338,39 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         children: [
           Row(
             children: [
-              Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 36,
-                    backgroundColor: AppColors.surfaceLight,
-                    backgroundImage: (user?.profileImageUrl != null && user!.profileImageUrl.isNotEmpty)
-                        ? NetworkImage(user.profileImageUrl) as ImageProvider
-                        : null,
-                    child: (user?.profileImageUrl == null || user!.profileImageUrl.isEmpty)
-                        ? Text(
-                            fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U',
-                            style: GoogleFonts.poppins(
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
-                            ),
-                          )
-                        : null,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: InkWell(
-                      onTap: () {
-                        if (user != null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditUserProfileScreen(user: user),
-                            ),
-                          );
-                        }
-                      },
+              GestureDetector(
+                onTap: () {
+                  if (user != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditUserProfileScreen(user: user),
+                      ),
+                    );
+                  }
+                },
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 36,
+                      backgroundColor: AppColors.surfaceLight,
+                      backgroundImage: (user?.profileImageUrl != null && user!.profileImageUrl.isNotEmpty)
+                          ? NetworkImage(user.profileImageUrl) as ImageProvider
+                          : null,
+                      child: (user?.profileImageUrl == null || user!.profileImageUrl.isEmpty)
+                          ? Text(
+                              fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U',
+                              style: GoogleFonts.poppins(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            )
+                          : null,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
                       child: Container(
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
@@ -378,11 +378,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 2),
                         ),
-                        child: const Icon(Icons.edit, size: 12, color: Colors.white),
+                        child: const Icon(Icons.camera_alt, size: 12, color: Colors.white),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(

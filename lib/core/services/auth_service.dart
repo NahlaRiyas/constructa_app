@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../models/user_model.dart';
+import 'media_upload_service.dart';
 
 /// ============================================================================
 /// FILE: auth_service.dart
@@ -165,18 +167,23 @@ class AuthService {
   // AUTHENTICATION: SIGNUP & USER PROFILE SECTION
   // ---------------------------------------------------------------------------
 
-  /// Uploads a user profile image file to Firebase Storage under `profile_images/{uid}.jpg`.
+  /// Uploads a user profile image file to free image host (ImgBB) or Firebase Storage.
   ///
   /// Returns the public download URL string on success, or empty string on error.
   Future<String> uploadImage(File imageFile, String uid) async {
     try {
-      Reference ref = _storage.ref().child('profile_images').child('$uid.jpg');
-      UploadTask uploadTask = ref.putFile(imageFile);
-      TaskSnapshot snapshot = await uploadTask;
-      return await snapshot.ref.getDownloadURL();
-    } catch (e) {
-      print("AuthService: Image upload error: $e");
-      return '';
+      return await MediaUploadService().uploadFile(imageFile);
+    } catch (imgbbErr) {
+      debugPrint("AuthService: ImgBB upload error, attempting Firebase Storage: $imgbbErr");
+      try {
+        Reference ref = _storage.ref().child('profile_images').child('$uid.jpg');
+        UploadTask uploadTask = ref.putFile(imageFile);
+        TaskSnapshot snapshot = await uploadTask;
+        return await snapshot.ref.getDownloadURL();
+      } catch (e) {
+        debugPrint("AuthService: Image upload error: $e");
+        return '';
+      }
     }
   }
 
@@ -197,12 +204,12 @@ class AuthService {
     File? profileImage,
   }) async {
     try {
-      print("AuthService: Attempting sign up for $email");
+      debugPrint("AuthService: Attempting sign up for $email");
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      print("AuthService: User created in Firebase Auth with UID: ${userCredential.user?.uid}");
+      debugPrint("AuthService: User created in Firebase Auth with UID: ${userCredential.user?.uid}");
 
       if (userCredential.user != null) {
         // Update Firebase User Profile (for display name and photo)
@@ -223,22 +230,22 @@ class AuthService {
           profileImageUrl: imageUrl,
         );
 
-        print("AuthService: Writing user data to Firestore 'users' collection...");
+        debugPrint("AuthService: Writing user data to Firestore 'users' collection...");
         try {
           await _firestore
               .collection('users')
               .doc(userCredential.user!.uid)
               .set(userModel.toMap());
-          print("AuthService: Successfully wrote user data to Firestore.");
+          debugPrint("AuthService: Successfully wrote user data to Firestore.");
         } catch (firestoreError) {
-          print("AuthService: FAILED to write to Firestore: $firestoreError");
+          debugPrint("AuthService: FAILED to write to Firestore: $firestoreError");
           throw Exception("Auth success, but Firestore failed: $firestoreError");
         }
       }
 
       return userCredential;
     } catch (e) {
-      print("AuthService: General error in signUp: $e");
+      debugPrint("AuthService: General error in signUp: $e");
       rethrow;
     }
   }
@@ -254,7 +261,7 @@ class AuthService {
     try {
       // 1. Update Email in Firebase Auth if provided and different
       if (email != null && email.isNotEmpty && email != _auth.currentUser?.email) {
-        await _auth.currentUser?.updateEmail(email);
+        await _auth.currentUser?.verifyBeforeUpdateEmail(email);
       }
 
       // 2. Handle Image Upload
@@ -272,11 +279,22 @@ class AuthService {
       if (email != null) updates['email'] = email;
       if (imageUrl.isNotEmpty) {
         updates['profileImageUrl'] = imageUrl;
+        try {
+          await _auth.currentUser?.updatePhotoURL(imageUrl);
+        } catch (e) {
+          debugPrint('Failed to update photoURL in auth: $e');
+        }
+      }
+
+      try {
+        await _auth.currentUser?.updateDisplayName(fullName);
+      } catch (e) {
+        debugPrint('Failed to update displayName in auth: $e');
       }
 
       await _firestore.collection('users').doc(uid).update(updates);
     } catch (e) {
-      print("AuthService: Update profile error: $e");
+      debugPrint("AuthService: Update profile error: $e");
       rethrow;
     }
   }

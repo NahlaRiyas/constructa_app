@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/palette.dart';
 import '../../../core/models/booking_model.dart';
+import '../../../core/models/company_model.dart';
 import '../../../core/models/house_plan_model.dart';
 import '../../../core/models/project_model.dart';
 import '../../../core/models/review_model.dart';
 import '../../../core/models/user_model.dart';
 import '../../../core/services/auth_service.dart';
 import '../../../core/services/booking_service.dart';
+import '../../../core/services/company_service.dart';
 import '../../../core/services/house_plan_service.dart';
 import '../../../core/services/project_service.dart';
 import '../../../core/services/review_service.dart';
@@ -27,32 +29,59 @@ class ConstructorDashboardScreen extends StatelessWidget {
       stream: AuthService().getUserData(),
       builder: (context, userSnap) {
         final companyUser = userSnap.data;
-        final companyName = companyUser?.fullName.isNotEmpty == true ? companyUser!.fullName : 'BuildWell Constructions';
 
-        return Scaffold(
-          backgroundColor: AppColors.background,
-          appBar: AppBar(
-            backgroundColor: AppColors.cardBackground,
-            elevation: 0,
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Constructor Console', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
-                Text(companyName, style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-              ],
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.edit_note, color: AppColors.secondary),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const CompanyProfileScreen()),
-                  );
-                },
+        return StreamBuilder<CompanyModel?>(
+          stream: CompanyService().getCompanyStream(companyUid),
+          builder: (context, compSnap) {
+            final company = compSnap.data;
+            final companyName = (company?.name.isNotEmpty == true)
+                ? company!.name
+                : (companyUser?.fullName.isNotEmpty == true ? companyUser!.fullName : 'BuildWell Constructions');
+            final avatarUrl = (company?.logoUrl.isNotEmpty == true)
+                ? company!.logoUrl
+                : (companyUser?.profileImageUrl.isNotEmpty == true ? companyUser!.profileImageUrl : '');
+
+            return Scaffold(
+              backgroundColor: AppColors.background,
+              appBar: AppBar(
+                backgroundColor: AppColors.cardBackground,
+                elevation: 0,
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Constructor Console', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
+                    Text(companyName, style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                  ],
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.edit_note, color: AppColors.secondary),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CompanyProfileScreen()),
+                      );
+                    },
+                  ),
+                  if (avatarUrl.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const CompanyProfileScreen()),
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 16,
+                          backgroundColor: AppColors.surfaceLight,
+                          backgroundImage: NetworkImage(avatarUrl),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-            ],
-          ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -144,7 +173,9 @@ class ConstructorDashboardScreen extends StatelessWidget {
         );
       },
     );
-  }
+  },
+);
+}
 
   Widget _buildLiveMetricsGrid(String companyUid) {
     return StreamBuilder<List<BookingModel>>(
@@ -283,7 +314,7 @@ class ConstructorDashboardScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: booking.status == 'Confirmed' ? AppColors.statusSuccess.withOpacity(0.12) : AppColors.statusPending.withOpacity(0.12),
+                  color: booking.status == 'Confirmed' ? AppColors.statusSuccess.withValues(alpha: 0.12) : AppColors.statusPending.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(booking.status, style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: booking.status == 'Confirmed' ? AppColors.statusSuccess : AppColors.statusPending)),

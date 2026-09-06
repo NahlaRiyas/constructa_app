@@ -121,7 +121,7 @@ class _ManageBookingsScreenState extends State<ManageBookingsScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.12),
+                  color: statusColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(booking.status.toUpperCase(), style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: statusColor)),
@@ -153,7 +153,9 @@ class _ManageBookingsScreenState extends State<ManageBookingsScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       await BookingService().updateBookingStatus(booking.id, 'Confirmed');
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking confirmed.')));
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking confirmed.')));
+                      }
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.statusSuccess, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
                     child: Text('Confirm', style: GoogleFonts.poppins(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold)),
@@ -167,7 +169,9 @@ class _ManageBookingsScreenState extends State<ManageBookingsScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       await BookingService().updateBookingStatus(booking.id, 'Completed');
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking marked as Completed!')));
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking marked as Completed!')));
+                      }
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
                     child: Text('Mark Completed', style: GoogleFonts.poppins(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold)),
@@ -180,7 +184,9 @@ class _ManageBookingsScreenState extends State<ManageBookingsScreen> {
                 OutlinedButton(
                   onPressed: () async {
                     await BookingService().updateBookingStatus(booking.id, 'Cancelled');
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking cancelled.')));
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking cancelled.')));
+                    }
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.statusDanger,
