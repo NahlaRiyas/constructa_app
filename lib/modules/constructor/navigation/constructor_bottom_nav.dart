@@ -11,10 +11,12 @@ class ConstructorMainNavigationShell extends StatefulWidget {
   const ConstructorMainNavigationShell({super.key, this.initialIndex = 0});
 
   @override
-  State<ConstructorMainNavigationShell> createState() => _ConstructorMainNavigationShellState();
+  State<ConstructorMainNavigationShell> createState() =>
+      _ConstructorMainNavigationShellState();
 }
 
-class _ConstructorMainNavigationShellState extends State<ConstructorMainNavigationShell> {
+class _ConstructorMainNavigationShellState
+    extends State<ConstructorMainNavigationShell> {
   late int _selectedIndex;
 
   final List<Widget> _screens = const [
@@ -66,8 +68,9 @@ class _ConstructorMainNavigationShellState extends State<ConstructorMainNavigati
             ),
             NavigationDestination(
               icon: Icon(Icons.architecture_outlined),
-              selectedIcon: Icon(Icons.architecture, color: AppColors.secondary),
-              label: 'Plans & Projects',
+              selectedIcon:
+                  Icon(Icons.architecture, color: AppColors.secondary),
+              label: 'Projects',
             ),
             NavigationDestination(
               icon: Icon(Icons.assignment_outlined),
@@ -77,7 +80,7 @@ class _ConstructorMainNavigationShellState extends State<ConstructorMainNavigati
             NavigationDestination(
               icon: Icon(Icons.storefront_outlined),
               selectedIcon: Icon(Icons.storefront, color: AppColors.secondary),
-              label: 'Company Profile',
+              label: 'Profile',
             ),
           ],
         ),

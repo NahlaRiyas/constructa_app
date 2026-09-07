@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../theme/palette.dart';
 import '../../../core/models/project_model.dart';
 import '../../../core/services/project_service.dart';
+import '../../../core/services/media_upload_service.dart';
+import '../../../core/common/utils/multi_image_picker_field.dart';
 
 class AddEditProjectScreen extends StatefulWidget {
   final ProjectModel? project;
@@ -18,9 +21,13 @@ class _AddEditProjectScreenState extends State<AddEditProjectScreen> {
   final _categoryController = TextEditingController();
   final _locationController = TextEditingController();
   final _completionDateController = TextEditingController();
-  final _imageUrlController = TextEditingController();
   final _descriptionController = TextEditingController();
+
+  List<String> _existingImageUrls = [];
+  List<XFile> _newImageFiles = [];
+
   bool _isLoading = false;
+  String _uploadStatus = '';
 
   @override
   void initState() {
@@ -30,9 +37,19 @@ class _AddEditProjectScreenState extends State<AddEditProjectScreen> {
       _categoryController.text = widget.project!.category;
       _locationController.text = widget.project!.location;
       _completionDateController.text = widget.project!.completionDate;
-      _imageUrlController.text = widget.project!.imageUrls.isNotEmpty ? widget.project!.imageUrls.first : '';
       _descriptionController.text = widget.project!.description;
+      _existingImageUrls = List.from(widget.project!.imageUrls);
     }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _categoryController.dispose();
+    _locationController.dispose();
+    _completionDateController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   Future<void> _saveProject() async {
@@ -43,27 +60,54 @@ class _AddEditProjectScreenState extends State<AddEditProjectScreen> {
       return;
     }
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _uploadStatus = 'Preparing project media...';
+    });
 
     try {
       final user = FirebaseAuth.instance.currentUser;
+
+      // Upload newly picked images (with automatic compression to <= 3MB)
+      List<String> newlyUploadedUrls = [];
+      if (_newImageFiles.isNotEmpty) {
+        newlyUploadedUrls = await MediaUploadService().uploadMultipleImages(
+          _newImageFiles,
+          onProgress: (current, total) {
+            if (mounted) {
+              setState(() {
+                _uploadStatus = 'Compressing & uploading photo $current of $total...';
+              });
+            }
+          },
+        );
+      }
+
+      final allImageUrls = [..._existingImageUrls, ...newlyUploadedUrls];
+
+      setState(() {
+        _uploadStatus = 'Saving project details to database...';
+      });
+
       final proj = ProjectModel(
         id: widget.project?.id ?? '',
         companyId: user?.uid ?? 'comp_1',
-        companyName: user?.displayName ?? 'BuildWell Constructions',
+        companyName: (user?.displayName != null && user!.displayName!.isNotEmpty)
+            ? user.displayName!
+            : 'BuildWell Constructions',
         title: _titleController.text.trim(),
         category: _categoryController.text.trim().isEmpty ? 'Construction' : _categoryController.text.trim(),
         location: _locationController.text.trim().isEmpty ? 'Kochi, Kerala' : _locationController.text.trim(),
         completionDate: _completionDateController.text.trim().isEmpty ? 'Aug 2026' : _completionDateController.text.trim(),
         description: _descriptionController.text.trim(),
-        imageUrls: _imageUrlController.text.trim().isNotEmpty ? [_imageUrlController.text.trim()] : [],
+        imageUrls: allImageUrls,
       );
 
       await ProjectService().addOrUpdateProject(proj);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Showcase Project ${widget.project == null ? "added" : "updated"}!')),
+          SnackBar(content: Text('Showcase Project ${widget.project == null ? "added" : "updated"} successfully!')),
         );
         Navigator.pop(context);
       }
@@ -75,7 +119,10 @@ class _AddEditProjectScreenState extends State<AddEditProjectScreen> {
       }
     } finally {
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(() {
+          _isLoading = false;
+          _uploadStatus = '';
+        });
       }
     }
   }
@@ -172,21 +219,20 @@ class _AddEditProjectScreenState extends State<AddEditProjectScreen> {
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
 
-            Text('Project Photo Image URL', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-            const SizedBox(height: 4),
-            TextField(
-              controller: _imageUrlController,
-              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
-              decoration: InputDecoration(
-                hintText: 'https://...',
-                filled: true,
-                fillColor: AppColors.cardBackground,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-              ),
+            // Multi-Image Picker Field
+            MultiImagePickerField(
+              title: 'Project Photos & Engineering Designs',
+              subtitle: 'Upload site pictures, interiors, elevations & finished views. Compressed to ≤ 3MB.',
+              initialUrls: _existingImageUrls,
+              initialFiles: _newImageFiles,
+              onChanged: (existing, newFiles) {
+                _existingImageUrls = existing;
+                _newImageFiles = newFiles;
+              },
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 16),
 
             Text('Project Details & Engineering Highlights', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
             const SizedBox(height: 4),
@@ -203,6 +249,19 @@ class _AddEditProjectScreenState extends State<AddEditProjectScreen> {
             ),
             const SizedBox(height: 24),
 
+            // Upload Status text if loading
+            if (_isLoading && _uploadStatus.isNotEmpty) ...[
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    _uploadStatus,
+                    style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.secondary),
+                  ),
+                ),
+              ),
+            ],
+
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -213,8 +272,15 @@ class _AddEditProjectScreenState extends State<AddEditProjectScreen> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : Text(widget.project == null ? 'Publish Showcase Project' : 'Save Project Changes', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                      )
+                    : Text(
+                        widget.project == null ? 'Publish Showcase Project' : 'Save Project Changes',
+                        style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
               ),
             ),
           ],

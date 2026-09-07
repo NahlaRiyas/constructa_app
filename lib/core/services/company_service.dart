@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/company_model.dart';
 
@@ -33,21 +34,56 @@ class CompanyService {
         return CompanyModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
       }
     } catch (e) {
-      print("Error fetching company: $e");
+      debugPrint("Error fetching company: $e");
     }
     return null;
+  }
+
+  /// Returns a real-time [Stream] of a single company profile by document [id].
+  Stream<CompanyModel?> getCompanyStream(String id) {
+    if (id.isEmpty) return Stream.value(null);
+    return _firestore.collection('companies').doc(id).snapshots().map((doc) {
+      if (doc.exists && doc.data() != null) {
+        return CompanyModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+      }
+      return null;
+    });
   }
 
   /// Saves or merges a construction company profile document into Firestore.
   ///
   /// Used during company user registration and profile updates.
-  /// Merges existing fields using [SetOptions(merge: true)].
+  /// Merges existing fields using [SetOptions(merge: true)] and synchronizes
+  /// with the `users` collection so [AuthService.getUserData] stays consistent.
   Future<CompanyModel> saveCompanyProfile(CompanyModel company) async {
     final docId = company.id.isEmpty ? company.uid : company.id;
     await _firestore.collection('companies').doc(docId).set(
       company.toMap(),
       SetOptions(merge: true),
     );
+
+    // Synchronize to users collection so user profile and AuthService().getUserData() stay in sync
+    try {
+      final updates = <String, dynamic>{};
+      if (company.logoUrl.isNotEmpty) {
+        updates['profileImageUrl'] = company.logoUrl;
+      }
+      if (company.name.isNotEmpty) {
+        updates['fullName'] = company.name;
+      }
+      if (company.phone.isNotEmpty) {
+        updates['phoneNumber'] = company.phone;
+      }
+      if (updates.isNotEmpty) {
+        await _firestore.collection('users').doc(docId).set(
+          updates,
+          SetOptions(merge: true),
+        );
+      }
+    } catch (e) {
+      debugPrint("Error syncing company to user profile: $e");
+    }
+
     return company;
   }
 }

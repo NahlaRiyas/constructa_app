@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import '../core/models/user_model.dart';
 import '../core/services/auth_service.dart';
 import '../modules/user/navigation/user_bottom_nav.dart';

@@ -1,9 +1,8 @@
+import 'package:constructa_app/core/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/palette.dart';
-import '../../services/auth_service.dart';
 import '../utils/global.dart';
-
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -44,7 +43,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to send reset email: ${e.toString()}')),
+          SnackBar(
+              content: Text('Failed to send reset email: ${e.toString()}')),
         );
       }
     } finally {
@@ -170,7 +170,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      style: GoogleFonts.poppins(fontSize: w * 0.032, color: AppColors.textPrimary),
+                      style: GoogleFonts.poppins(
+                          fontSize: w * 0.032, color: AppColors.textPrimary),
                       decoration: InputDecoration(
                         prefixIcon: Icon(
                           Icons.mail_outline,
@@ -190,15 +191,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: AppColors.borderLight),
+                          borderSide:
+                              const BorderSide(color: AppColors.borderLight),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: AppColors.borderLight),
+                          borderSide:
+                              const BorderSide(color: AppColors.borderLight),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                          borderSide: const BorderSide(
+                              color: AppColors.primary, width: 1.5),
                         ),
                       ),
                     ),
@@ -222,7 +226,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             ? const SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2, color: Colors.white),
                               )
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -251,7 +256,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.check_circle, color: AppColors.statusSuccess, size: w * 0.05),
+                          Icon(Icons.check_circle,
+                              color: AppColors.statusSuccess, size: w * 0.05),
                           SizedBox(width: w * 0.02),
                           Expanded(
                             child: Text(
@@ -273,10 +279,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                   // Back to Login Button Link
                   InkWell(
-                    onTap: () => Navigator.pushReplacementNamed(context, '/login'),
+                    onTap: () =>
+                        Navigator.pushReplacementNamed(context, '/login'),
                     borderRadius: BorderRadius.circular(8),
                     child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: height * 0.0075, horizontal: w * 0.03),
+                      padding: EdgeInsets.symmetric(
+                          vertical: height * 0.0075, horizontal: w * 0.03),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [

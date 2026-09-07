@@ -34,12 +34,57 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
     _phoneController.text = widget.user.phoneNumber;
   }
 
-  Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
+  void _pickImage() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.cardBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Choose Profile Photo',
+                style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined, color: AppColors.primary),
+                title: Text('Choose from Gallery', style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _getImageFromSource(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt_outlined, color: AppColors.secondary),
+                title: Text('Take New Photo', style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _getImageFromSource(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _getImageFromSource(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
     }
   }
 
@@ -113,39 +158,39 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
             children: [
               // Profile Picture Picker
               Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: AppColors.surfaceLight,
-                      backgroundImage: _imageFile != null
-                          ? FileImage(_imageFile!)
-                          : (widget.user.profileImageUrl.isNotEmpty
-                              ? NetworkImage(widget.user.profileImageUrl)
-                              : null) as ImageProvider?,
-                      child: _imageFile == null && widget.user.profileImageUrl.isEmpty
-                          ? const Icon(Icons.person, size: 50, color: AppColors.textSecondary)
-                          : null,
-                    ),
-                    Positioned(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: AppColors.surfaceLight,
+                        backgroundImage: _imageFile != null
+                            ? FileImage(_imageFile!)
+                            : (widget.user.profileImageUrl.isNotEmpty
+                                ? NetworkImage(widget.user.profileImageUrl)
+                                : null) as ImageProvider?,
+                        child: _imageFile == null && widget.user.profileImageUrl.isEmpty
+                            ? const Icon(Icons.person, size: 50, color: AppColors.textSecondary)
+                            : null,
+                      ),
+                      Positioned(
                       bottom: 0,
                       right: 0,
-                      child: GestureDetector(
-                        onTap: _pickImage,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(
-                            color: AppColors.primary,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
                         ),
+                        child: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+            ),
+            const SizedBox(height: 32),
 
               // Full Name
               Text('Full Name', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),

@@ -63,7 +63,7 @@ class _CompanyDetailScreenState extends State<CompanyDetailScreen> with SingleTi
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [Colors.black.withOpacity(0.2), Colors.black.withOpacity(0.7)],
+                        colors: [Colors.black.withValues(alpha: 0.2), Colors.black.withValues(alpha: 0.7)],
                       ),
                     ),
                   ),

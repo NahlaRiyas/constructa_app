@@ -111,11 +111,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 child: Container(
                                   padding: EdgeInsets.all(w * 0.03),
                                   decoration: BoxDecoration(
-                                    color: AppColors.cardBackground.withOpacity(0.9),
+                                    color: AppColors.cardBackground.withValues(alpha: 0.9),
                                     borderRadius: BorderRadius.circular(16),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
+                                        color: Colors.black.withValues(alpha: 0.1),
                                         blurRadius: 10,
                                       ),
                                     ],
