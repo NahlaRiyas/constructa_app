@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/palette.dart';
-import '../../../services/auth_service.dart';
+import '../../services/auth_service.dart';
 import '../utils/global.dart';
 
 
