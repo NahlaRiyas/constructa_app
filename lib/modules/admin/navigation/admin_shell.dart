@@ -63,7 +63,7 @@ class _AdminShellState extends State<AdminShell> {
   Widget _buildSidebarContent({bool isDrawer = false}) {
     return Container(
       width: isDrawer ? null : 260,
-      decoration: const BoxDecoration(
+      decoration:  BoxDecoration(
         color: AppColors.darkBackground,
         border: Border(right: BorderSide(color: AppColors.surfaceDark)),
       ),
@@ -93,7 +93,7 @@ class _AdminShellState extends State<AdminShell> {
               ],
             ),
           ),
-          const Divider(color: AppColors.surfaceDark, height: 1),
+          Divider(color: AppColors.surfaceDark, height: 1),
           const SizedBox(height: 12),
 
           // Navigation Items

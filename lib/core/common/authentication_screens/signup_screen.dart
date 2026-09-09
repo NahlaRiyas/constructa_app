@@ -176,7 +176,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon:  Icon(
             Icons.arrow_back,
             color: AppColors.textPrimary,
           ),
@@ -387,7 +387,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       color: AppColors.textPrimary,
                     ),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
+                      prefixIcon:  Icon(
                         Icons.person_outline,
                         color: AppColors.textSecondary,
                       ),
@@ -395,13 +395,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       fillColor: AppColors.surfaceLight,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
+                        borderSide:  BorderSide(
                           color: AppColors.borderLight,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
+                        borderSide:  BorderSide(
                           color: AppColors.borderLight,
                         ),
                       ),
@@ -439,7 +439,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       color: AppColors.textPrimary,
                     ),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
+                      prefixIcon:  Icon(
                         Icons.mail_outline,
                         color: AppColors.textSecondary,
                       ),
@@ -447,13 +447,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       fillColor: AppColors.surfaceLight,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
+                        borderSide:  BorderSide(
                           color: AppColors.borderLight,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
+                        borderSide:  BorderSide(
                           color: AppColors.borderLight,
                         ),
                       ),
@@ -491,7 +491,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       color: AppColors.textPrimary,
                     ),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
+                      prefixIcon:  Icon(
                         Icons.phone_outlined,
                         color: AppColors.textSecondary,
                       ),
@@ -499,13 +499,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       fillColor: AppColors.surfaceLight,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
+                        borderSide:  BorderSide(
                           color: AppColors.borderLight,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
+                        borderSide:  BorderSide(
                           color: AppColors.borderLight,
                         ),
                       ),
@@ -543,7 +543,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       color: AppColors.textPrimary,
                     ),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(
+                      prefixIcon:  Icon(
                         Icons.lock_outline,
                         color: AppColors.textSecondary,
                       ),
@@ -564,13 +564,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       fillColor: AppColors.surfaceLight,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
+                        borderSide:  BorderSide(
                           color: AppColors.borderLight,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
+                        borderSide:  BorderSide(
                           color: AppColors.borderLight,
                         ),
                       ),
@@ -656,7 +656,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   // =========================
                   Row(
                     children: [
-                      const Expanded(
+                       Expanded(
                         child: Divider(
                           color: AppColors.borderLight,
                         ),
@@ -674,7 +674,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                       ),
-                      const Expanded(
+                       Expanded(
                         child: Divider(
                           color: AppColors.borderLight,
                         ),
@@ -698,7 +698,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      side: const BorderSide(
+                      side:  BorderSide(
                         color: AppColors.borderLight,
                       ),
                     ),

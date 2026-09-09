@@ -9,6 +9,16 @@ import '../../../core/services/auth_service.dart';
 import '../../../core/services/media_upload_service.dart';
 import '../../../core/common/utils/multi_image_picker_field.dart';
 
+/// ============================================================================
+/// FILE: add_edit_house_plan_screen.dart
+/// MODULE: Constructor Module (Floor Plan Creator UI Layer)
+/// PROJECT: Constructa App - College Project
+/// DESCRIPTION:
+///   Provides house plan creation and editing form controls. Uses MediaQuery
+///   for responsive layout sizing and prevents RenderFlex overflows on all
+///   mobile and web display resolutions.
+/// ============================================================================
+
 class AddEditHousePlanScreen extends StatefulWidget {
   final HousePlanModel? plan;
   const AddEditHousePlanScreen({super.key, this.plan});
@@ -159,76 +169,148 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // MediaQuery Responsive Dimension Calculations
+    final screenSize = MediaQuery.of(context).size;
+    final w = screenSize.width;
+    final h = screenSize.height;
+
+    final double hPadding = (w * 0.04).clamp(12.0, 24.0);
+    final double vPadding = (h * 0.02).clamp(10.0, 20.0);
+    final double fieldGap = (h * 0.018).clamp(12.0, 20.0);
+    final double labelFontSize = (w * 0.033).clamp(11.0, 15.0);
+    final double inputFontSize = (w * 0.036).clamp(12.0, 16.0);
+    final double buttonHeight = (h * 0.06).clamp(46.0, 56.0);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.getBackground(context),
       appBar: AppBar(
-        backgroundColor: AppColors.cardBackground,
+        backgroundColor: AppColors.getCardBackground(context),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back,
+              color: AppColors.getTextPrimary(context), size: (w * 0.06).clamp(20.0, 28.0)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.plan == null ? 'Add New House Plan' : 'Edit House Plan',
-          style: GoogleFonts.poppins(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 17),
+          style: GoogleFonts.poppins(
+            color: AppColors.getTextPrimary(context),
+            fontWeight: FontWeight.bold,
+            fontSize: (w * 0.043).clamp(15.0, 20.0),
+          ),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: EdgeInsets.fromLTRB(hPadding, vPadding, hPadding, h * 0.05),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Plan Title', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-            const SizedBox(height: 4),
+            // Field 1: Plan Title
+            Text('Plan Title',
+                style: GoogleFonts.poppins(
+                    fontSize: labelFontSize,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.getTextPrimary(context))),
+            SizedBox(height: h * 0.006),
             TextField(
               controller: _titleController,
-              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(
+                  fontSize: inputFontSize, color: AppColors.getTextPrimary(context)),
               decoration: InputDecoration(
                 hintText: 'e.g. Modern Nordic Villa',
+                hintStyle: GoogleFonts.poppins(
+                    fontSize: inputFontSize, color: AppColors.textMuted),
                 filled: true,
-                fillColor: AppColors.cardBackground,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                fillColor: AppColors.getCardBackground(context),
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: w * 0.035, vertical: h * 0.014),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(w * 0.03),
+                    borderSide: BorderSide(color: AppColors.getBorderLight(context))),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(w * 0.03),
+                    borderSide: BorderSide(color: AppColors.getBorderLight(context))),
               ),
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: fieldGap),
 
+            // Field 2 & 3: BHK & Sq.Ft Row (Responsive Flex Layout)
             Row(
               children: [
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('BHK (e.g. 3BHK)', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-                      const SizedBox(height: 4),
+                      Text('BHK Type',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                              fontSize: labelFontSize,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.getTextPrimary(context))),
+                      SizedBox(height: h * 0.006),
                       TextField(
                         controller: _bhkController,
-                        style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+                        style: GoogleFonts.poppins(
+                            fontSize: inputFontSize,
+                            color: AppColors.getTextPrimary(context)),
                         decoration: InputDecoration(
                           hintText: '3BHK',
+                          hintStyle: GoogleFonts.poppins(
+                              fontSize: inputFontSize, color: AppColors.textMuted),
                           filled: true,
-                          fillColor: AppColors.cardBackground,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                          fillColor: AppColors.getCardBackground(context),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: w * 0.035, vertical: h * 0.014),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(w * 0.03),
+                              borderSide:
+                                  BorderSide(color: AppColors.getBorderLight(context))),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(w * 0.03),
+                              borderSide:
+                                  BorderSide(color: AppColors.getBorderLight(context))),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: w * 0.03),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Square Feet (Sq.Ft)', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-                      const SizedBox(height: 4),
+                      Text('Square Feet (Sq.Ft)',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                              fontSize: labelFontSize,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.getTextPrimary(context))),
+                      SizedBox(height: h * 0.006),
                       TextField(
                         controller: _sqftController,
                         keyboardType: TextInputType.number,
-                        style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+                        style: GoogleFonts.poppins(
+                            fontSize: inputFontSize,
+                            color: AppColors.getTextPrimary(context)),
                         decoration: InputDecoration(
                           hintText: '2400',
+                          hintStyle: GoogleFonts.poppins(
+                              fontSize: inputFontSize, color: AppColors.textMuted),
                           filled: true,
-                          fillColor: AppColors.cardBackground,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                          fillColor: AppColors.getCardBackground(context),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: w * 0.035, vertical: h * 0.014),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(w * 0.03),
+                              borderSide:
+                                  BorderSide(color: AppColors.getBorderLight(context))),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(w * 0.03),
+                              borderSide:
+                                  BorderSide(color: AppColors.getBorderLight(context))),
                         ),
                       ),
                     ],
@@ -236,43 +318,77 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: fieldGap),
 
-            Text('Contract Price (in ₹ INR)', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-            const SizedBox(height: 4),
+            // Field 4: Contract Price
+            Text('Contract Price (in ₹ INR)',
+                style: GoogleFonts.poppins(
+                    fontSize: labelFontSize,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.getTextPrimary(context))),
+            SizedBox(height: h * 0.006),
             TextField(
               controller: _priceController,
               keyboardType: TextInputType.number,
-              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(
+                  fontSize: inputFontSize, color: AppColors.getTextPrimary(context)),
               decoration: InputDecoration(
                 hintText: '4800000',
+                hintStyle: GoogleFonts.poppins(
+                    fontSize: inputFontSize, color: AppColors.textMuted),
                 filled: true,
-                fillColor: AppColors.cardBackground,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                fillColor: AppColors.getCardBackground(context),
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: w * 0.035, vertical: h * 0.014),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(w * 0.03),
+                    borderSide: BorderSide(color: AppColors.getBorderLight(context))),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(w * 0.03),
+                    borderSide: BorderSide(color: AppColors.getBorderLight(context))),
               ),
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: fieldGap),
 
-            Text('Badge Tag', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-            const SizedBox(height: 4),
+            // Field 5: Badge Tag
+            Text('Badge Tag',
+                style: GoogleFonts.poppins(
+                    fontSize: labelFontSize,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.getTextPrimary(context))),
+            SizedBox(height: h * 0.006),
             DropdownButtonFormField<String>(
               initialValue: _selectedTag,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: AppColors.cardBackground,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                fillColor: AppColors.getCardBackground(context),
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: w * 0.035, vertical: h * 0.014),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(w * 0.03),
+                    borderSide: BorderSide(color: AppColors.getBorderLight(context))),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(w * 0.03),
+                    borderSide: BorderSide(color: AppColors.getBorderLight(context))),
               ),
               items: ['Bestseller', 'Trending', 'New', 'Featured'].map((t) {
-                return DropdownMenuItem(value: t, child: Text(t, style: GoogleFonts.poppins(fontSize: 14)));
+                return DropdownMenuItem(
+                    value: t,
+                    child: Text(t,
+                        style: GoogleFonts.poppins(
+                            fontSize: inputFontSize,
+                            color: AppColors.getTextPrimary(context))));
               }).toList(),
-              onChanged: (val) => setState(() => _selectedTag = val ?? 'Bestseller'),
+              onChanged: (val) =>
+                  setState(() => _selectedTag = val ?? 'Bestseller'),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: fieldGap),
 
-            // Multi-Image Picker Field
+            // Field 6: Multi-Image Picker Component
             MultiImagePickerField(
-              title: 'House Plan Blueprints & 3D Renderings',
-              subtitle: 'Upload multiple floor plans, 2D blueprints, elevation renders & layouts. Auto-compressed to ≤ 3MB.',
+              title: 'House Plan Blueprints',
+              subtitle:
+                  'Upload multiple floor plans, 2D blueprints, elevation renders & layouts. Auto-compressed to ≤ 3MB.',
               initialUrls: _existingImageUrls,
               initialFiles: _newImageFiles,
               onChanged: (existing, newFiles) {
@@ -280,58 +396,106 @@ class _AddEditHousePlanScreenState extends State<AddEditHousePlanScreen> {
                 _newImageFiles = newFiles;
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: fieldGap),
 
-            Text('Description & Highlights', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-            const SizedBox(height: 4),
+            // Field 7: Description & Highlights
+            Text('Description & Highlights',
+                style: GoogleFonts.poppins(
+                    fontSize: labelFontSize,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.getTextPrimary(context))),
+            SizedBox(height: h * 0.006),
             TextField(
               controller: _descriptionController,
               maxLines: 3,
-              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(
+                  fontSize: inputFontSize, color: AppColors.getTextPrimary(context)),
               decoration: InputDecoration(
-                hintText: 'Describe floor specs, exterior finish, bedroom layouts...',
+                hintText:
+                    'Describe floor specs, exterior finish, bedroom layouts...',
+                hintStyle: GoogleFonts.poppins(
+                    fontSize: inputFontSize, color: AppColors.textMuted),
                 filled: true,
-                fillColor: AppColors.cardBackground,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                fillColor: AppColors.getCardBackground(context),
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: w * 0.035, vertical: h * 0.014),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(w * 0.03),
+                    borderSide: BorderSide(color: AppColors.getBorderLight(context))),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(w * 0.03),
+                    borderSide: BorderSide(color: AppColors.getBorderLight(context))),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: fieldGap * 1.5),
+          ],
+        ),
+      ),
 
-            // Upload Status text if loading
-            if (_isLoading && _uploadStatus.isNotEmpty) ...[
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
+      // Fixed Primary Action Button in Bottom Navigation Bar (Prevents Vertical Overflows)
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(
+              horizontal: hPadding, vertical: (h * 0.015).clamp(8.0, 16.0)),
+          decoration: BoxDecoration(
+            color: AppColors.getCardBackground(context),
+            border: Border(
+                top: BorderSide(
+                    color: AppColors.getBorderLight(context), width: 1.0)),
+            boxShadow: const [
+              BoxShadow(
+                color: AppColors.shadowColor,
+                blurRadius: 8,
+                offset: Offset(0, -2),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_isLoading && _uploadStatus.isNotEmpty) ...[
+                Padding(
+                  padding: EdgeInsets.only(bottom: h * 0.008),
                   child: Text(
                     _uploadStatus,
-                    style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.secondary),
+                    style: GoogleFonts.poppins(
+                        fontSize: (w * 0.03).clamp(10.0, 13.0),
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.secondary),
+                    textAlign: TextAlign.center,
                   ),
+                ),
+              ],
+              SizedBox(
+                width: double.infinity,
+                height: buttonHeight,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _savePlan,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondary,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(w * 0.03)),
+                  ),
+                  child: _isLoading
+                      ? SizedBox(
+                          height: (w * 0.05).clamp(18.0, 24.0),
+                          width: (w * 0.05).clamp(18.0, 24.0),
+                          child: const CircularProgressIndicator(
+                              color: Colors.white, strokeWidth: 2),
+                        )
+                      : Text(
+                          widget.plan == null
+                              ? 'Publish House Plan'
+                              : 'Save Plan Changes',
+                          style: GoogleFonts.poppins(
+                              fontSize: (w * 0.038).clamp(13.0, 17.0),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
                 ),
               ),
             ],
-
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _savePlan,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : Text(
-                        widget.plan == null ? 'Publish House Plan' : 'Save Plan Changes',
-                        style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

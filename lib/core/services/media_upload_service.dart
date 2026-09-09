@@ -44,9 +44,11 @@ class MediaUploadService {
           format: CompressFormat.jpeg,
         );
 
-        compressed = Uint8List.fromList(result);
-        if (compressed.lengthInBytes <= maxBytes) {
-          return compressed;
+        if (result.isNotEmpty) {
+          compressed = result;
+          if (compressed.lengthInBytes <= maxBytes) {
+            return compressed;
+          }
         }
         quality -= 15;
       }

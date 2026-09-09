@@ -7,6 +7,10 @@ import '../../../core/services/review_service.dart';
 import '../../../core/common/utils/fullscreen_image_viewer.dart';
 import 'rate_review_screen.dart';
 
+/// ProjectDetailScreen
+///
+/// Displays project details, photo gallery, location specs, and customer reviews.
+/// Employs MediaQuery throughout for responsive sizing and dynamic layout adaptation across device screen sizes.
 class ProjectDetailScreen extends StatefulWidget {
   final ProjectModel project;
   const ProjectDetailScreen({super.key, required this.project});
@@ -34,22 +38,36 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // MediaQuery Responsive Dimension & Sizing Calculations
+    final screenSize = MediaQuery.of(context).size;
+    final w = screenSize.width;
+    final h = screenSize.height;
+
+    final double hPadding = (w * 0.04).clamp(12.0, 24.0);
+    final double sectionGap = (h * 0.022).clamp(14.0, 24.0);
+    final double appBarHeight = (h * 0.35).clamp(240.0, 380.0);
+    final double titleFontSize = (w * 0.055).clamp(18.0, 26.0);
+    final double sectionHeaderFontSize = (w * 0.042).clamp(14.0, 20.0);
+    final double bodyFontSize = (w * 0.034).clamp(11.0, 15.0);
+    final double captionFontSize = (w * 0.030).clamp(10.0, 13.0);
+    final double thumbnailSize = (w * 0.22).clamp(70.0, 100.0);
+
     final images = _images;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.getBackground(context),
       body: CustomScrollView(
         slivers: [
-          // Multi-Image Carousel Header
+          // Multi-Image Carousel Header (SliverAppBar with MediaQuery dimensions)
           SliverAppBar(
-            expandedHeight: 280,
+            expandedHeight: appBarHeight,
             pinned: true,
             backgroundColor: AppColors.primary,
-            iconTheme: const IconThemeData(color: Colors.white),
+            iconTheme: IconThemeData(color: Colors.white, size: (w * 0.06).clamp(20.0, 28.0)),
             actions: [
               if (images.isNotEmpty)
                 IconButton(
-                  icon: const Icon(Icons.fullscreen, color: Colors.white),
+                  icon: Icon(Icons.fullscreen, color: Colors.white, size: (w * 0.06).clamp(20.0, 28.0)),
                   tooltip: 'View Fullscreen Gallery',
                   onPressed: () {
                     FullscreenImageViewer.open(
@@ -84,18 +102,18 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Container(
                             color: AppColors.surfaceLight,
-                            child: const Icon(Icons.broken_image, size: 50, color: AppColors.textMuted),
+                            child: Icon(Icons.broken_image, size: (w * 0.12).clamp(36.0, 60.0), color: AppColors.textMuted),
                           ),
                         ),
                       );
                     },
                   ),
-                  // Dark gradient overlay for title legibility
+                  // Dark gradient overlay
                   Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    height: 60,
+                    height: h * 0.08,
                     child: Container(
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
@@ -109,22 +127,22 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                   // Photo counter badge
                   if (images.length > 1)
                     Positioned(
-                      bottom: 12,
-                      right: 16,
+                      bottom: h * 0.015,
+                      right: hPadding,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: EdgeInsets.symmetric(horizontal: w * 0.025, vertical: h * 0.005),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.75),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(w * 0.03),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.photo_library, size: 12, color: Colors.white),
-                            const SizedBox(width: 4),
+                            Icon(Icons.photo_library, size: (w * 0.032).clamp(10.0, 14.0), color: Colors.white),
+                            SizedBox(width: w * 0.01),
                             Text(
                               '${_currentImageIndex + 1} / ${images.length}',
-                              style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                              style: GoogleFonts.poppins(fontSize: captionFontSize, fontWeight: FontWeight.bold, color: Colors.white),
                             ),
                           ],
                         ),
@@ -133,18 +151,18 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                   // Page dot indicators
                   if (images.length > 1)
                     Positioned(
-                      bottom: 16,
-                      left: 16,
+                      bottom: h * 0.02,
+                      left: hPadding,
                       child: Row(
                         children: List.generate(images.length, (i) {
                           final isSelected = i == _currentImageIndex;
                           return Container(
-                            margin: const EdgeInsets.only(right: 4),
-                            width: isSelected ? 16 : 6,
-                            height: 6,
+                            margin: EdgeInsets.only(right: w * 0.01),
+                            width: isSelected ? w * 0.04 : w * 0.015,
+                            height: h * 0.008,
                             decoration: BoxDecoration(
                               color: isSelected ? Colors.white : Colors.white54,
-                              borderRadius: BorderRadius.circular(3),
+                              borderRadius: BorderRadius.circular(h * 0.004),
                             ),
                           );
                         }),
@@ -157,49 +175,58 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
 
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(hPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: EdgeInsets.symmetric(horizontal: w * 0.025, vertical: h * 0.005),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(w * 0.02),
                     ),
-                    child: Text(widget.project.category, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: AppColors.primary, fontSize: 12)),
+                    child: Text(widget.project.category, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: AppColors.primary, fontSize: captionFontSize)),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: h * 0.015),
 
-                  Text(widget.project.title, style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-                  const SizedBox(height: 4),
+                  Text(widget.project.title, style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.bold, color: AppColors.getTextPrimary(context))),
+                  SizedBox(height: h * 0.005),
                   Row(
                     children: [
-                      const Icon(Icons.location_on, size: 16, color: AppColors.textSecondary),
-                      const SizedBox(width: 4),
-                      Text(widget.project.location, style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary)),
+                      Icon(Icons.location_on, size: (w * 0.04).clamp(14.0, 18.0), color: AppColors.getTextSecondary(context)),
+                      SizedBox(width: w * 0.01),
+                      Expanded(
+                        child: Text(
+                          widget.project.location,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(fontSize: bodyFontSize, color: AppColors.getTextSecondary(context)),
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: sectionGap),
 
-                  Text('Project Overview', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-                  const SizedBox(height: 8),
+                  Text('Project Overview', style: GoogleFonts.poppins(fontSize: sectionHeaderFontSize, fontWeight: FontWeight.bold, color: AppColors.getTextPrimary(context))),
+                  SizedBox(height: h * 0.01),
                   Text(
                     widget.project.description.isNotEmpty
                         ? widget.project.description
                         : 'A premium construction project showcasing exceptional architectural design and engineering excellence.',
-                    style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary, height: 1.5),
+                    style: GoogleFonts.poppins(fontSize: bodyFontSize, color: AppColors.getTextSecondary(context), height: 1.5),
                   ),
-                  const SizedBox(height: 12),
-                  Text('Completed on: ${widget.project.completionDate}', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-                  const SizedBox(height: 20),
+                  SizedBox(height: h * 0.015),
+                  Text('Completed on: ${widget.project.completionDate}', style: GoogleFonts.poppins(fontSize: bodyFontSize, fontWeight: FontWeight.w600, color: AppColors.getTextPrimary(context))),
+                  SizedBox(height: sectionGap),
 
-                  // Architectural & Site Gallery Section (Multi-Image Showcase)
+                  // Architectural & Site Gallery Section
                   if (images.length > 1) ...[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Project Gallery (${images.length} Photos)', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                        Expanded(
+                          child: Text('Project Gallery (${images.length} Photos)', style: GoogleFonts.poppins(fontSize: sectionHeaderFontSize, fontWeight: FontWeight.bold, color: AppColors.getTextPrimary(context))),
+                        ),
                         TextButton(
                           onPressed: () {
                             FullscreenImageViewer.open(
@@ -209,17 +236,17 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                               title: widget.project.title,
                             );
                           },
-                          child: Text('View All', style: GoogleFonts.poppins(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 12)),
+                          child: Text('View All', style: GoogleFonts.poppins(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: bodyFontSize)),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: h * 0.01),
                     SizedBox(
-                      height: 90,
+                      height: thumbnailSize,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: images.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 10),
+                        separatorBuilder: (_, __) => SizedBox(width: w * 0.025),
                         itemBuilder: (context, idx) {
                           final isCurrent = idx == _currentImageIndex;
                           return GestureDetector(
@@ -231,16 +258,16 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                               );
                             },
                             child: Container(
-                              width: 90,
+                              width: thumbnailSize,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(w * 0.025),
                                 border: Border.all(
-                                  color: isCurrent ? AppColors.secondary : AppColors.borderLight,
+                                  color: isCurrent ? AppColors.secondary : AppColors.getBorderLight(context),
                                   width: isCurrent ? 2.5 : 1.0,
                                 ),
                               ),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(w * 0.02),
                                 child: Image.network(images[idx], fit: BoxFit.cover),
                               ),
                             ),
@@ -248,14 +275,14 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: sectionGap),
                   ],
 
                   // Reviews Section
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Project Reviews', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                      Text('Project Reviews', style: GoogleFonts.poppins(fontSize: sectionHeaderFontSize, fontWeight: FontWeight.bold, color: AppColors.getTextPrimary(context))),
                       TextButton(
                         onPressed: () {
                           Navigator.push(
@@ -271,11 +298,11 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                             ),
                           );
                         },
-                        child: Text('Rate Project', style: GoogleFonts.poppins(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 13)),
+                        child: Text('Rate Project', style: GoogleFonts.poppins(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: bodyFontSize)),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: h * 0.01),
 
                   StreamBuilder<List<ReviewModel>>(
                     stream: ReviewService().getReviews(targetId: widget.project.id, targetType: 'project'),
@@ -284,18 +311,18 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                       if (reviews.isEmpty) {
                         return Center(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: Text('No reviews for this project yet.', style: GoogleFonts.poppins(color: AppColors.textSecondary, fontSize: 13)),
+                            padding: EdgeInsets.symmetric(vertical: h * 0.025),
+                            child: Text('No reviews for this project yet.', style: GoogleFonts.poppins(color: AppColors.getTextSecondary(context), fontSize: bodyFontSize)),
                           ),
                         );
                       }
 
                       return Column(
-                        children: reviews.map((rev) => _buildReviewCard(rev)).toList(),
+                        children: reviews.map((rev) => _buildReviewCard(context, rev)).toList(),
                       );
                     },
                   ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: h * 0.05),
                 ],
               ),
             ),
@@ -305,14 +332,21 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
     );
   }
 
-  Widget _buildReviewCard(ReviewModel review) {
+  Widget _buildReviewCard(BuildContext context, ReviewModel review) {
+    final w = MediaQuery.of(context).size.width;
+    final h = MediaQuery.of(context).size.height;
+    final bodyFontSize = (w * 0.034).clamp(11.0, 15.0);
+    final captionFontSize = (w * 0.030).clamp(10.0, 13.0);
+    final avatarRadius = (w * 0.045).clamp(16.0, 22.0);
+    final starSize = (w * 0.035).clamp(12.0, 16.0);
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
+      margin: EdgeInsets.only(bottom: h * 0.015),
+      padding: EdgeInsets.all(w * 0.035),
       decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.borderLight),
+        color: AppColors.getCardBackground(context),
+        borderRadius: BorderRadius.circular(w * 0.035),
+        border: Border.all(color: AppColors.getBorderLight(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,18 +354,18 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
           Row(
             children: [
               CircleAvatar(
-                radius: 18,
+                radius: avatarRadius,
                 backgroundColor: AppColors.surfaceLight,
                 backgroundImage: review.userAvatar.isNotEmpty ? NetworkImage(review.userAvatar) : null,
-                child: review.userAvatar.isEmpty ? const Icon(Icons.person, size: 18, color: AppColors.textSecondary) : null,
+                child: review.userAvatar.isEmpty ? Icon(Icons.person, size: avatarRadius, color: AppColors.getTextSecondary(context)) : null,
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: w * 0.025),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(review.userName, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary)),
-                    Text(review.createdAt, style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
+                    Text(review.userName, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: bodyFontSize, color: AppColors.getTextPrimary(context))),
+                    Text(review.createdAt, style: GoogleFonts.poppins(fontSize: captionFontSize, color: AppColors.getTextSecondary(context))),
                   ],
                 ),
               ),
@@ -340,15 +374,15 @@ class _ProjectDetailScreenState extends State<ProjectDetailScreen> {
                   5,
                   (i) => Icon(
                     Icons.star,
-                    size: 14,
-                    color: i < review.rating ? AppColors.starRating : AppColors.borderLight,
+                    size: starSize,
+                    color: i < review.rating ? AppColors.starRating : AppColors.getBorderLight(context),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(review.comment, style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textPrimary)),
+          SizedBox(height: h * 0.01),
+          Text(review.comment, style: GoogleFonts.poppins(fontSize: bodyFontSize, color: AppColors.getTextPrimary(context))),
         ],
       ),
     );

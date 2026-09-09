@@ -304,7 +304,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -485,11 +485,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide:
-                              const BorderSide(color: AppColors.borderLight)),
+                              BorderSide(color: AppColors.borderLight)),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide:
-                              const BorderSide(color: AppColors.borderLight)),
+                              BorderSide(color: AppColors.borderLight)),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
@@ -513,7 +513,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: GoogleFonts.poppins(
                         fontSize: w * 0.035, color: AppColors.textPrimary),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.mail_outline,
+                      prefixIcon: Icon(Icons.mail_outline,
                           color: AppColors.textSecondary),
                       hintText: 'name@example.com',
                       hintStyle: GoogleFonts.poppins(
@@ -523,11 +523,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide:
-                              const BorderSide(color: AppColors.borderLight)),
+                              BorderSide(color: AppColors.borderLight)),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide:
-                              const BorderSide(color: AppColors.borderLight)),
+                              BorderSide(color: AppColors.borderLight)),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
@@ -551,7 +551,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: GoogleFonts.poppins(
                         fontSize: w * 0.035, color: AppColors.textPrimary),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.phone_outlined,
+                      prefixIcon: Icon(Icons.phone_outlined,
                           color: AppColors.textSecondary),
                       hintText: '+91 98765 43210',
                       hintStyle: GoogleFonts.poppins(
@@ -561,11 +561,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide:
-                              const BorderSide(color: AppColors.borderLight)),
+                              BorderSide(color: AppColors.borderLight)),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide:
-                              const BorderSide(color: AppColors.borderLight)),
+                              BorderSide(color: AppColors.borderLight)),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
@@ -589,7 +589,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: GoogleFonts.poppins(
                         fontSize: w * 0.035, color: AppColors.textPrimary),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.lock_outline,
+                      prefixIcon: Icon(Icons.lock_outline,
                           color: AppColors.textSecondary),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -608,11 +608,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide:
-                              const BorderSide(color: AppColors.borderLight)),
+                              BorderSide(color: AppColors.borderLight)),
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide:
-                              const BorderSide(color: AppColors.borderLight)),
+                              BorderSide(color: AppColors.borderLight)),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
@@ -678,12 +678,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   // Divider
                   Row(
                     children: [
-                      const Expanded(child: Divider(color: AppColors.borderLight)),
+                      Expanded(child: Divider(color: AppColors.borderLight)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Text('OR CONTINUE WITH', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
                       ),
-                      const Expanded(child: Divider(color: AppColors.borderLight)),
+                      Expanded(child: Divider(color: AppColors.borderLight)),
                     ],
                   ),
                   SizedBox(height: height * 0.02),
@@ -694,7 +694,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: OutlinedButton.styleFrom(
                       minimumSize: Size(double.infinity, height * 0.055),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      side: const BorderSide(color: AppColors.borderLight),
+                      side: BorderSide(color: AppColors.borderLight),
                     ),
                     icon: const Icon(Icons.g_mobiledata, size: 28, color: AppColors.primary),
                     label: Text('Google Sign Up', style: GoogleFonts.poppins(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w500)),

@@ -18,7 +18,7 @@ class ConstructorReviewsScreen extends StatelessWidget {
         backgroundColor: AppColors.cardBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon:  Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('Customer Ratings & Feedback', style: GoogleFonts.poppins(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
@@ -70,7 +70,7 @@ class ConstructorReviewsScreen extends StatelessWidget {
                 radius: 18,
                 backgroundColor: AppColors.surfaceLight,
                 backgroundImage: review.userAvatar.isNotEmpty ? NetworkImage(review.userAvatar) : null,
-                child: review.userAvatar.isEmpty ? const Icon(Icons.person, size: 18, color: AppColors.textSecondary) : null,
+                child: review.userAvatar.isEmpty ?  Icon(Icons.person, size: 18, color: AppColors.textSecondary) : null,
               ),
               const SizedBox(width: 10),
               Expanded(

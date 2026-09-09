@@ -32,10 +32,10 @@ class _ManageBookingsScreenState extends State<ManageBookingsScreen> {
       ),
       body: Column(
         children: [
-          // Filter Chips
+          // Filter Choice Chips Container
           Container(
             color: AppColors.cardBackground,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -43,12 +43,23 @@ class _ManageBookingsScreenState extends State<ManageBookingsScreen> {
                   final isSelected = _selectedStatus == st;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      selected: isSelected,
-                      label: Text(st, style: GoogleFonts.poppins(color: isSelected ? Colors.white : AppColors.textPrimary, fontSize: 12)),
-                      selectedColor: AppColors.secondary,
-                      backgroundColor: AppColors.surfaceLight,
-                      onSelected: (val) => setState(() => _selectedStatus = st),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      child: ChoiceChip(
+                        selected: isSelected,
+                        label: Text(
+                          st,
+                          style: GoogleFonts.poppins(
+                            color: isSelected ? Colors.white : AppColors.textPrimary,
+                            fontSize: 12,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                        selectedColor: AppColors.secondary,
+                        backgroundColor: AppColors.surfaceLight,
+                        onSelected: (val) => setState(() => _selectedStatus = st),
+                      ),
                     ),
                   );
                 }).toList(),
@@ -56,7 +67,7 @@ class _ManageBookingsScreenState extends State<ManageBookingsScreen> {
             ),
           ),
 
-          // Bookings List Stream
+          // Bookings List Stream with Animated Items
           Expanded(
             child: StreamBuilder<List<BookingModel>>(
               stream: BookingService().getCompanyBookings(companyUid),
@@ -72,7 +83,14 @@ class _ManageBookingsScreenState extends State<ManageBookingsScreen> {
 
                 if (bookings.isEmpty) {
                   return Center(
-                    child: Text('No bookings found under "$_selectedStatus".', style: GoogleFonts.poppins(color: AppColors.textSecondary)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.assignment_late, size: 48, color: AppColors.textMuted),
+                        const SizedBox(height: 12),
+                        Text('No bookings found under "$_selectedStatus".', style: GoogleFonts.poppins(color: AppColors.textSecondary)),
+                      ],
+                    ),
                   );
                 }
 
@@ -81,7 +99,7 @@ class _ManageBookingsScreenState extends State<ManageBookingsScreen> {
                   itemCount: bookings.length,
                   itemBuilder: (context, index) {
                     final b = bookings[index];
-                    return _buildBookingControlCard(context, b);
+                    return _buildAnimatedBookingControlCard(context, b, index);
                   },
                 );
               },
@@ -92,113 +110,187 @@ class _ManageBookingsScreenState extends State<ManageBookingsScreen> {
     );
   }
 
-  Widget _buildBookingControlCard(BuildContext context, BookingModel booking) {
+  /// Renders booking cards with staggered slide and fade entrance animation.
+  Widget _buildAnimatedBookingControlCard(
+      BuildContext context, BookingModel booking, int index) {
     Color statusColor = AppColors.statusPending;
     if (booking.status == 'Confirmed') statusColor = AppColors.statusSuccess;
     if (booking.status == 'Completed') statusColor = AppColors.primary;
     if (booking.status == 'Cancelled') statusColor = AppColors.statusDanger;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
-          BoxShadow(color: AppColors.shadowColor, blurRadius: 6, offset: Offset(0, 3)),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(booking.userName, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary)),
+    final textSec = AppColors.textSecondary;
+    final textPrim = AppColors.textPrimary;
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 300 + (index * 80)),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, (1.0 - value) * 20),
+          child: Opacity(
+            opacity: value,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 14),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.cardBackground,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.borderLight),
+                boxShadow: const [
+                  BoxShadow(
+                      color: AppColors.shadowColor,
+                      blurRadius: 6,
+                      offset: Offset(0, 3)),
+                ],
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(booking.status.toUpperCase(), style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: statusColor)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(booking.userName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: textPrim)),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: statusColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(booking.status.toUpperCase(),
+                            style: GoogleFonts.poppins(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: statusColor)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.phone_outlined, size: 14, color: textSec),
+                      const SizedBox(width: 4),
+                      Text(
+                        booking.userPhone,
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: textSec,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text('Plan: ${booking.planTitle}',
+                      style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary)),
+                  Text(
+                      'Scheduled: ${booking.bookingDate} at ${booking.timeSlot}',
+                      style: GoogleFonts.poppins(
+                          fontSize: 12, color: AppColors.textSecondary)),
+                  if (booking.notes.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text('Client Request: "${booking.notes}"',
+                        style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            fontStyle: FontStyle.italic,
+                            color: AppColors.textSecondary)),
+                  ],
+                  const SizedBox(height: 12),
+
+                  // Status Action Controls
+                  Row(
+                    children: [
+                      if (booking.status == 'Pending') ...[
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await BookingService()
+                                  .updateBookingStatus(booking.id, 'Confirmed');
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Booking confirmed.')));
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.statusSuccess,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8))),
+                            child: Text('Confirm',
+                                style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      if (booking.status == 'Confirmed') ...[
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await BookingService()
+                                  .updateBookingStatus(booking.id, 'Completed');
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Booking marked as Completed!')));
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8))),
+                            child: Text('Mark Completed',
+                                style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                      if (booking.status != 'Cancelled' &&
+                          booking.status != 'Completed')
+                        OutlinedButton(
+                          onPressed: () async {
+                            await BookingService()
+                                .updateBookingStatus(booking.id, 'Cancelled');
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Booking cancelled.')));
+                            }
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.statusDanger,
+                            side: const BorderSide(color: AppColors.statusDanger),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          child: Text('Cancel',
+                              style: GoogleFonts.poppins(fontSize: 12)),
+                        ),
+                    ],
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              const Icon(Icons.phone_outlined, size: 14, color: AppColors.textSecondary),
-              const SizedBox(width: 4),
-              Text(booking.userPhone, style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text('Plan: ${booking.planTitle}', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-          Text('Scheduled: ${booking.bookingDate} at ${booking.timeSlot}', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textSecondary)),
-          if (booking.notes.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text('Client Request: "${booking.notes}"', style: GoogleFonts.poppins(fontSize: 11, fontStyle: FontStyle.italic, color: AppColors.textSecondary)),
-          ],
-          const SizedBox(height: 12),
-
-          // Status Action Controls
-          Row(
-            children: [
-              if (booking.status == 'Pending') ...[
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await BookingService().updateBookingStatus(booking.id, 'Confirmed');
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking confirmed.')));
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.statusSuccess, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                    child: Text('Confirm', style: GoogleFonts.poppins(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold)),
-                  ),
-                ),
-                const SizedBox(width: 8),
-              ],
-
-              if (booking.status == 'Confirmed') ...[
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await BookingService().updateBookingStatus(booking.id, 'Completed');
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking marked as Completed!')));
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                    child: Text('Mark Completed', style: GoogleFonts.poppins(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold)),
-                  ),
-                ),
-                const SizedBox(width: 8),
-              ],
-
-              if (booking.status != 'Cancelled' && booking.status != 'Completed')
-                OutlinedButton(
-                  onPressed: () async {
-                    await BookingService().updateBookingStatus(booking.id, 'Cancelled');
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking cancelled.')));
-                    }
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.statusDanger,
-                    side: const BorderSide(color: AppColors.statusDanger),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: Text('Cancel', style: GoogleFonts.poppins(fontSize: 12)),
-                ),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

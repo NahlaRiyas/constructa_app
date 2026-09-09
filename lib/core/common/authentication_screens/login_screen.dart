@@ -130,22 +130,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: _emailController,
                     style: GoogleFonts.poppins(fontSize: w * 0.035, color: AppColors.textPrimary),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.mail_outline, color: AppColors.textSecondary),
+                      prefixIcon: Icon(Icons.mail_outline, color: AppColors.getTextSecondary(context)),
                       hintText: 'name@company.com',
                       hintStyle: GoogleFonts.poppins(color: AppColors.textMuted, fontSize: w * 0.032),
                       filled: true,
                       fillColor: AppColors.surfaceLight,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.borderLight),
+                        borderSide: BorderSide(color: AppColors.getBorderLight(context)),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.borderLight),
+                        borderSide: BorderSide(color: AppColors.getBorderLight(context)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                        borderSide: BorderSide(color: AppColors.primary, width: 1.5),
                       ),
                     ),
                   ),
@@ -166,9 +166,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: _obscureText,
                     style: GoogleFonts.poppins(fontSize: w * 0.035, color: AppColors.textPrimary),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textSecondary),
+                      prefixIcon: Icon(Icons.lock_outline, color: AppColors.getTextSecondary(context)),
                       suffixIcon: IconButton(
-                        icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: AppColors.textSecondary),
+                        icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: AppColors.getTextSecondary(context)),
                         onPressed: () => setState(() => _obscureText = !_obscureText),
                       ),
                       hintText: '••••••••',
@@ -177,15 +177,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       fillColor: AppColors.surfaceLight,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.borderLight),
+                        borderSide: BorderSide(color: AppColors.getBorderLight(context)),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.borderLight),
+                        borderSide: BorderSide(color: AppColors.getBorderLight(context)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                        borderSide: BorderSide(color: AppColors.primary, width: 1.5),
                       ),
                     ),
                   ),
@@ -224,12 +224,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   Row(
                     children: [
-                      const Expanded(child: Divider(color: AppColors.borderLight)),
+                      Expanded(child: Divider(color: AppColors.getBorderLight(context))),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: w * 0.035),
-                        child: Text('OR CONTINUE WITH', style: GoogleFonts.poppins(fontSize: w * 0.025, color: AppColors.textSecondary, fontWeight: FontWeight.bold)),
+                        child: Text('OR CONTINUE WITH', style: GoogleFonts.poppins(fontSize: w * 0.025, color: AppColors.getTextSecondary(context), fontWeight: FontWeight.bold)),
                       ),
-                      const Expanded(child: Divider(color: AppColors.borderLight)),
+                      Expanded(child: Divider(color: AppColors.getBorderLight(context))),
                     ],
                   ),
                   SizedBox(height: height * 0.025),
@@ -239,17 +239,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: OutlinedButton.styleFrom(
                       minimumSize: Size(double.infinity, height * 0.06),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      side: const BorderSide(color: AppColors.borderLight),
+                      side: BorderSide(color: AppColors.getBorderLight(context)),
                     ),
                     icon: Image.network('https://e7.pngegg.com/pngimages/337/722/png-clipart-google-search-google-account-google-s-google-play-google-company-text-thumbnail.png', height: height * 0.04),
-                    label: Text('Google Sign In', style: GoogleFonts.poppins(color: AppColors.textPrimary, fontSize: w * 0.04, fontWeight: FontWeight.w500)),
+                    label: Text('Google Sign In', style: GoogleFonts.poppins(color: AppColors.getTextPrimary(context), fontSize: w * 0.04, fontWeight: FontWeight.w500)),
                   ),
                   SizedBox(height: height * 0.03),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Don't have an account? ", style: GoogleFonts.poppins(fontSize: w * 0.032, color: AppColors.textSecondary)),
+                      Text("Don't have an account? ", style: GoogleFonts.poppins(fontSize: w * 0.032, color: AppColors.getTextSecondary(context))),
                       GestureDetector(
                         onTap: () => Navigator.pushNamed(context, '/signup'),
                         child: Text('Sign Up', style: GoogleFonts.poppins(fontSize: w * 0.032, color: AppColors.primary, fontWeight: FontWeight.bold)),

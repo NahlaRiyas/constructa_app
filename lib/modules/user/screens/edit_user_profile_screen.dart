@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import '../../../theme/palette.dart';
 import '../../../core/models/user_model.dart';
 import '../../../core/services/auth_service.dart';
-import '../../../core/common/utils/global.dart';
 import '../../../core/common/utils/validation_utils.dart';
 
 class EditUserProfileScreen extends StatefulWidget {
@@ -133,7 +132,18 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    initScreenSize(context);
+    // MediaQuery Responsive Dimension Calculations
+    final screenSize = MediaQuery.of(context).size;
+    final w = screenSize.width;
+    final h = screenSize.height;
+
+    final double hPadding = w * 0.05;
+    final double vPadding = h * 0.025;
+    final double fieldGap = h * 0.02;
+    final double titleFontSize = w * 0.035;
+    final double inputFontSize = w * 0.038;
+    final double avatarRadius = w * 0.12; // ~50dp
+    final double buttonHeight = h * 0.06;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -141,16 +151,16 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
         backgroundColor: AppColors.cardBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary, size: w * 0.06),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Edit Profile',
-          style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+          style: GoogleFonts.poppins(fontSize: w * 0.043, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.symmetric(horizontal: hPadding, vertical: vPadding),
         child: Form(
           key: _formKey,
           child: Column(
@@ -163,7 +173,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                   child: Stack(
                     children: [
                       CircleAvatar(
-                        radius: 50,
+                        radius: avatarRadius,
                         backgroundColor: AppColors.surfaceLight,
                         backgroundImage: _imageFile != null
                             ? FileImage(_imageFile!)
@@ -171,95 +181,98 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                                 ? NetworkImage(widget.user.profileImageUrl)
                                 : null) as ImageProvider?,
                         child: _imageFile == null && widget.user.profileImageUrl.isEmpty
-                            ? const Icon(Icons.person, size: 50, color: AppColors.textSecondary)
+                            ? Icon(Icons.person, size: avatarRadius, color: AppColors.textSecondary)
                             : null,
                       ),
                       Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(w * 0.018),
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.camera_alt, size: w * 0.045, color: Colors.white),
                         ),
-                        child: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 32),
+              SizedBox(height: h * 0.035),
 
               // Full Name
-              Text('Full Name', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-              const SizedBox(height: 8),
+              Text('Full Name', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+              SizedBox(height: h * 0.008),
               TextFormField(
                 controller: _fullNameController,
-                style: GoogleFonts.poppins(fontSize: 15, color: AppColors.textPrimary),
+                style: GoogleFonts.poppins(fontSize: inputFontSize, color: AppColors.textPrimary),
                 validator: ValidationUtils.validateName,
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.person_outline, color: AppColors.textSecondary),
+                  prefixIcon: Icon(Icons.person_outline, color: AppColors.textSecondary, size: w * 0.05),
                   filled: true,
                   fillColor: AppColors.cardBackground,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+                  contentPadding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
+                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: fieldGap),
 
               // Email Address
-              Text('Email Address', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-              const SizedBox(height: 8),
+              Text('Email Address', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+              SizedBox(height: h * 0.008),
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                style: GoogleFonts.poppins(fontSize: 15, color: AppColors.textPrimary),
+                style: GoogleFonts.poppins(fontSize: inputFontSize, color: AppColors.textPrimary),
                 validator: ValidationUtils.validateEmail,
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.mail_outline, color: AppColors.textSecondary),
+                  prefixIcon: Icon(Icons.mail_outline, color: AppColors.textSecondary, size: w * 0.05),
                   filled: true,
                   fillColor: AppColors.cardBackground,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+                  contentPadding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
+                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: fieldGap),
 
               // Phone Number
-              Text('Phone Number', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-              const SizedBox(height: 8),
+              Text('Phone Number', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+              SizedBox(height: h * 0.008),
               TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
-                style: GoogleFonts.poppins(fontSize: 15, color: AppColors.textPrimary),
+                style: GoogleFonts.poppins(fontSize: inputFontSize, color: AppColors.textPrimary),
                 validator: ValidationUtils.validatePhone,
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.textSecondary),
+                  prefixIcon: Icon(Icons.phone_outlined, color: AppColors.textSecondary, size: w * 0.05),
                   filled: true,
                   fillColor: AppColors.cardBackground,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+                  contentPadding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
+                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
                 ),
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: h * 0.045),
 
               // Update Button
               SizedBox(
-                height: 50,
+                height: buttonHeight,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _handleUpdate,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(w * 0.03)),
                   ),
                   child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text('Save Changes', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                      ? SizedBox(height: w * 0.05, width: w * 0.05, child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                      : Text('Save Changes', style: GoogleFonts.poppins(fontSize: w * 0.038, fontWeight: FontWeight.bold, color: Colors.white)),
                 ),
               ),
             ],

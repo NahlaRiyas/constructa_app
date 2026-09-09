@@ -1,9 +1,7 @@
-import '../utils/global.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../../theme/palette.dart';
-
+import '../utils/global.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -19,55 +17,60 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<OnboardingData> _pages = [
     OnboardingData(
       title: 'Find Trusted Construction Companies',
-      description: 'Browse verified builders and contractors in Kerala. Your dream project starts here.',
+      description: 'Browse verified builders and contractors in Kerala. Your dream project starts with trusted professionals.',
       imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBkqiuKAxv7HoeYJt1SjLlKJdpGUxis4ccv6gIDxPUBmLnWAOBORj1N1DkOIb8F-G72v3AThkfWcg2XUTogsD8xBlsAOGcS1wTpPIXEph-9UnYSI2KO3ls13XascaSMdIUOHgwMMrTpYpybNCoPY5O5bJDNuwoca7nkaaUhdMB0lYhZil9pd32auW1vGwVzb5cw8f1hqQKPdq3b4TkkRhMdHlt8xjqU3G_DNiP2ivREKF1Ni6L54AM0',
       badgeTitle: 'Quality Assurance',
       badgeSubtitle: 'ISO Certified Builders',
     ),
     OnboardingData(
       title: 'Compare Plans & Pricing',
-      description: 'Get transparent pricing and detailed house blueprints tailored to your construction needs.',
+      description: 'Get transparent pricing and detailed 2D/3D house blueprints tailored to your construction needs.',
       imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDA9ykOdtGDg-1aNLTWQ-i-8BG0tVIXPC4-7c5jhh2diPqlqLZBWRHdEsrGS9ujsGNB1eSWJAfoVtTOKYSCqHddvkKipOIiU9HRny_WcSqPxLByVf9SN9A0VjBvIpxglHAmRR4BPQHcNeef3v9AcrqVpMnnCzU_c9CF5NUVIbOQ61HVZDp7HOS-mk-WTGEEhJkCmrgeQoo8yRP_W4n_gsIBGzTSuehUCjFIhHLIFSezAMaoikkC7Vfh',
       badgeTitle: 'FIXED PRICING',
-      badgeSubtitle: 'Smart Estimates',
+      badgeSubtitle: 'Smart Cost Calculator',
     ),
     OnboardingData(
-      title: 'Book With Confidence',
-      description: 'Securely book site visits and track project progress in real-time.',
+      title: 'Book Consultations & Site Visits',
+      description: 'Securely book site visits and schedule on-site consultations with verified constructors.',
       imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAQAmk29PhKr8OlyeDKbBDwr1gbIVINpOX0C68ZEPJO7TK5Ri8cd_7yHGkBl5OflMYw4gzAzK6XGQ-URM6H7Aa9TYqxJKRhKywljwFqqUovhx5ZjNHWtJ7Mv-VQLCZa4bxU3fbWiNSIOlymxMmluyf1BO5PRb51uXX6CHUVzxwDU5mr8kKYu1jliQPR-A_LkOXwCqE0bQBXhuQqDM6qIsSMRsiiKiUrOuNxNnqMQsWo3UGcdp2EBBkX',
       badgeTitle: 'Site Visit Confirmed',
       badgeSubtitle: '10:00 AM • Progress Tracked',
     ),
   ];
 
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   void _nextPage() {
     if (_currentPage < _pages.length - 1) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
       );
     } else {
-      Navigator.pushReplacementNamed(context, '/login');
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Initialize global w and height via Media Query
     initScreenSize(context);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.getBackground(context),
       body: SafeArea(
         child: Column(
           children: [
-            // Header Skip Button using AppColors.primary & GoogleFonts.poppins
+            // Header Skip Button
             Padding(
               padding: EdgeInsets.symmetric(horizontal: w * 0.06, vertical: height * 0.015),
               child: Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
                   child: Text(
                     'SKIP',
                     style: GoogleFonts.poppins(
@@ -95,14 +98,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         Expanded(
                           child: Stack(
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(w * 0.07),
-                                child: Image.network(
-                                  data.imageUrl,
-                                  width: w,
-                                  height: height * 0.45,
-                                  fit: BoxFit.cover,
-                                ),
+                              TweenAnimationBuilder<double>(
+                                tween: Tween<double>(begin: 0.9, end: _currentPage == index ? 1.0 : 0.9),
+                                duration: const Duration(milliseconds: 350),
+                                curve: Curves.easeOutBack,
+                                builder: (context, scale, child) {
+                                  return Transform.scale(
+                                    scale: scale,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(w * 0.07),
+                                      child: Image.network(
+                                        data.imageUrl,
+                                        width: w,
+                                        height: height * 0.45,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                               Positioned(
                                 bottom: height * 0.02,
@@ -111,8 +124,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 child: Container(
                                   padding: EdgeInsets.all(w * 0.03),
                                   decoration: BoxDecoration(
-                                    color: AppColors.cardBackground.withValues(alpha: 0.9),
+                                    color: AppColors.getCardBackground(context).withValues(alpha: 0.92),
                                     borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(color: AppColors.getBorderLight(context)),
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black.withValues(alpha: 0.1),
@@ -122,8 +136,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   ),
                                   child: Row(
                                     children: [
-                                      const CircleAvatar(
-                                        backgroundColor: AppColors.surfaceLight,
+                                      CircleAvatar(
+                                        backgroundColor: Color(0xFFF0F3FF),
                                         child: Icon(Icons.verified, color: AppColors.secondary),
                                       ),
                                       const SizedBox(width: 12),
@@ -136,7 +150,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             style: GoogleFonts.poppins(
                                               fontSize: w * 0.023,
                                               fontWeight: FontWeight.bold,
-                                              color: AppColors.textSecondary,
+                                              color: AppColors.primary,
                                             ),
                                           ),
                                           Text(
@@ -144,7 +158,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                             style: GoogleFonts.poppins(
                                               fontSize: w * 0.032,
                                               fontWeight: FontWeight.bold,
-                                              color: AppColors.textPrimary,
+                                              color: AppColors.getTextPrimary(context),
                                             ),
                                           ),
                                         ],
@@ -157,7 +171,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ),
                         ),
                         SizedBox(height: height * 0.03),
-                        // Title using AppColors.primary and GoogleFonts.poppins
                         Text(
                           data.title,
                           textAlign: TextAlign.center,
@@ -174,7 +187,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             fontSize: w * 0.035,
-                            color: AppColors.textSecondary,
+                            color: AppColors.getTextSecondary(context),
                           ),
                         ),
                       ],
@@ -192,13 +205,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       _pages.length,
-                          (i) => AnimatedContainer(
+                      (i) => AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         margin: const EdgeInsets.symmetric(horizontal: 4),
-                        width: _currentPage == i ? 28 : 8,
+                        width: _currentPage == i ? 32 : 8,
                         height: 8,
                         decoration: BoxDecoration(
-                          color: _currentPage == i ? AppColors.primary : AppColors.borderLight,
+                          color: _currentPage == i ? AppColors.primary : AppColors.getBorderLight(context),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),

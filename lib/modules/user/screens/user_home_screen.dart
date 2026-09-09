@@ -139,7 +139,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     children: [
                       Text('Construction Cost Calculator', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
                       IconButton(
-                        icon: const Icon(Icons.close, color: AppColors.textSecondary),
+                        icon: Icon(Icons.close, color: AppColors.textSecondary),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
@@ -269,7 +269,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+          Expanded(
+            child: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+          ),
+          const SizedBox(width: 8),
           Text(val, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
         ],
       ),
@@ -377,7 +380,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 padding: EdgeInsets.only(right: horizontalPadding),
                 child: IconButton(
                   style: IconButton.styleFrom(backgroundColor: AppColors.surfaceLight),
-                  icon: const Icon(Icons.notifications_outlined, color: AppColors.textSecondary),
+                  icon: Icon(Icons.notifications_outlined, color: AppColors.textSecondary),
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('No new notifications.')),
@@ -401,7 +404,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   decoration: InputDecoration(
                     hintText: 'Search for contractors, plans, or services...',
                     hintStyle: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 14),
-                    prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
+                    prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear, size: 18),
@@ -411,8 +414,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     filled: true,
                     fillColor: AppColors.cardBackground,
                     contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.borderLight)),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.borderLight)),
                     focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
                   ),
                 ),
@@ -773,7 +776,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(Icons.location_on, size: 14, color: AppColors.textSecondary),
+                          Icon(Icons.location_on, size: 14, color: AppColors.textSecondary),
                           const SizedBox(width: 2),
                           Expanded(child: Text(company.location, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(color: AppColors.textSecondary, fontSize: 12))),
                         ],

@@ -117,132 +117,146 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
   Widget build(BuildContext context) {
     final formattedDateStr = DateFormat('EEEE, MMMM dd, yyyy').format(_selectedDate);
 
+    // MediaQuery Responsive Dimension Calculations
+    final screenSize = MediaQuery.of(context).size;
+    final w = screenSize.width;
+    final h = screenSize.height;
+
+    final double hPadding = w * 0.04;
+    final double vPadding = h * 0.02;
+    final double fieldGap = h * 0.02;
+    final double titleFontSize = w * 0.038;
+    final double inputFontSize = w * 0.036;
+    final double buttonHeight = h * 0.062;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.cardBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary, size: w * 0.06),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Book Service / Consultation', style: GoogleFonts.poppins(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 17)),
+        title: Text('Book Service / Consultation', style: GoogleFonts.poppins(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: w * 0.043)),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.symmetric(horizontal: hPadding, vertical: vPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Target Details Card
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(w * 0.04),
               decoration: BoxDecoration(
                 color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(w * 0.04),
                 border: Border.all(color: AppColors.borderLight),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Contractor', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
-                  Text(widget.companyName, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primary)),
-                  const Divider(height: 20),
-                  Text('Selected House Plan / Service', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
-                  Text(widget.planTitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                  Text('Contractor', style: GoogleFonts.poppins(fontSize: w * 0.028, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                  Text(widget.companyName, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: w * 0.04, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                  Divider(height: h * 0.02),
+                  Text('Selected House Plan / Service', style: GoogleFonts.poppins(fontSize: w * 0.028, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
+                  Text(widget.planTitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(fontSize: w * 0.035, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: fieldGap),
 
             // Date Picker Section
-            Text('Select Date', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-            const SizedBox(height: 8),
+            Text('Select Date', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+            SizedBox(height: h * 0.008),
             GestureDetector(
               onTap: _pickDate,
               child: Container(
-                padding: const EdgeInsets.all(14),
+                padding: EdgeInsets.all(w * 0.035),
                 decoration: BoxDecoration(
                   color: AppColors.cardBackground,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(w * 0.03),
                   border: Border.all(color: AppColors.borderLight),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(formattedDateStr, style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
-                    const Icon(Icons.calendar_month, color: AppColors.primary),
+                    Text(formattedDateStr, style: GoogleFonts.poppins(fontSize: inputFontSize, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
+                    Icon(Icons.calendar_month, color: AppColors.primary, size: w * 0.05),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: fieldGap),
 
             // Time Slot Selection
-            Text('Select Time Slot', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-            const SizedBox(height: 8),
+            Text('Select Time Slot', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+            SizedBox(height: h * 0.008),
             Wrap(
-              spacing: 10,
-              runSpacing: 10,
+              spacing: w * 0.025,
+              runSpacing: h * 0.01,
               children: _timeSlots.map((slot) {
                 final isSelected = _selectedTimeSlot == slot;
                 return ChoiceChip(
                   selected: isSelected,
-                  label: Text(slot, style: GoogleFonts.poppins(color: isSelected ? Colors.white : AppColors.textPrimary, fontSize: 13)),
+                  label: Text(slot, style: GoogleFonts.poppins(color: isSelected ? Colors.white : AppColors.textPrimary, fontSize: w * 0.032)),
                   selectedColor: AppColors.primary,
                   backgroundColor: AppColors.surfaceLight,
                   onSelected: (val) => setState(() => _selectedTimeSlot = slot),
                 );
               }).toList(),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: fieldGap),
 
             // Contact Phone Number
-            Text('Contact Phone Number', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-            const SizedBox(height: 8),
+            Text('Contact Phone Number', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+            SizedBox(height: h * 0.008),
             TextField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
-              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(fontSize: inputFontSize, color: AppColors.textPrimary),
               decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.textSecondary),
+                prefixIcon: Icon(Icons.phone_outlined, color: AppColors.textSecondary, size: w * 0.05),
                 hintText: '+91 98765 43210',
                 filled: true,
                 fillColor: AppColors.cardBackground,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                contentPadding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: fieldGap),
 
             // Notes & Plot Location Details
-            Text('Site Notes & Requirements (Optional)', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-            const SizedBox(height: 8),
+            Text('Site Notes & Requirements (Optional)', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+            SizedBox(height: h * 0.008),
             TextField(
               controller: _notesController,
               maxLines: 3,
-              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(fontSize: inputFontSize, color: AppColors.textPrimary),
               decoration: InputDecoration(
                 hintText: 'Specify plot location, square footage, budget constraints...',
                 filled: true,
                 fillColor: AppColors.cardBackground,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                contentPadding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
               ),
             ),
-            const SizedBox(height: 30),
+            SizedBox(height: h * 0.035),
 
             SizedBox(
               width: double.infinity,
-              height: 52,
+              height: buttonHeight,
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _submitBooking,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(w * 0.03)),
                 ),
                 child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : Text('Confirm Booking Request', style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white)),
+                    ? SizedBox(height: w * 0.05, width: w * 0.05, child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                    : Text('Confirm Booking Request', style: GoogleFonts.poppins(fontSize: w * 0.038, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
             ),
           ],
@@ -251,3 +265,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
     );
   }
 }
+
+
+
+

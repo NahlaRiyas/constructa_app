@@ -73,6 +73,14 @@ class AuthService {
     }
   }
 
+  /// Convenience alias for [login].
+  Future<UserCredential?> signInWithEmailAndPassword(
+    String email,
+    String password,
+  ) async {
+    return await login(email: email, password: password);
+  }
+
   /// Authenticates a user using Google OAuth Single Sign-On (SSO).
   ///
   /// Workflow:

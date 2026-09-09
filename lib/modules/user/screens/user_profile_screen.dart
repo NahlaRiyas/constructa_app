@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/common/utils/global.dart';
 import '../../../theme/palette.dart';
 import '../../../core/models/user_model.dart';
 import '../../../core/models/booking_model.dart';
@@ -17,8 +18,8 @@ import 'user_companies_screen.dart';
 /// PROJECT: Constructa App - College Project
 /// DESCRIPTION:
 ///   Displays profile management, quick stats, account settings, notification
-///   preferences, app theme customization, support options, and session sign-out
-///   functionality for authenticated customer users in Constructa.
+///   preferences, support options, and session sign-out functionality for
+///   authenticated customer users using MediaQuery for responsive layout sizing.
 /// ============================================================================
 
 class UserProfileScreen extends StatefulWidget {
@@ -29,12 +30,6 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  // Notification Preferences State
-  bool _pushNotifications = true;
-  bool _bookingAlerts = true;
-  bool _promotionalOffers = false;
-  bool _emailUpdates = true;
-
   // Selected Theme Mode State
   late String _selectedTheme;
 
@@ -60,6 +55,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     final subTextColor = isDark ? AppColors.textMuted : AppColors.textSecondary;
     final borderColor = theme.colorScheme.outlineVariant;
 
+    // MediaQuery Responsive Sizing
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+
+    final double hPadding = screenWidth * 0.04; // 4% screen width
+    final double vPadding = screenHeight * 0.02; // 2% screen height
+    final double sectionGap = screenHeight * 0.025; // 2.5% screen height
+    final double buttonHeight = screenHeight * 0.06; // 6% screen height
+
     return StreamBuilder<UserModel?>(
       stream: AuthService().getUserData(),
       builder: (context, snapshot) {
@@ -73,40 +78,40 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             title: Text(
               'User Profile',
               style: GoogleFonts.poppins(
-                fontSize: 18,
+                fontSize: screenWidth * 0.045,
                 fontWeight: FontWeight.bold,
                 color: textColor,
               ),
             ),
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(horizontal: hPadding, vertical: vPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // -------------------------------------------------------------
                 // UI SECTION 1: User Profile Details Header Card
                 // -------------------------------------------------------------
-                _buildProfileHeaderCard(context, user, cardBg, textColor, subTextColor, borderColor),
-                const SizedBox(height: 16),
+                _buildProfileHeaderCard(context, user, cardBg, textColor, subTextColor, borderColor, screenWidth, screenHeight),
+                SizedBox(height: screenHeight * 0.018),
 
                 // -------------------------------------------------------------
                 // UI SECTION 2: Profile Completeness Progress Banner
                 // -------------------------------------------------------------
-                _buildProfileCompletenessBanner(user, cardBg, textColor, borderColor),
-                const SizedBox(height: 20),
+                _buildProfileCompletenessBanner(user, cardBg, textColor, borderColor, screenWidth, screenHeight),
+                SizedBox(height: sectionGap),
 
                 // -------------------------------------------------------------
                 // UI SECTION 3: Quick Action / Statistics Overview Cards
                 // -------------------------------------------------------------
-                _buildQuickStatsOverview(context, user, cardBg, textColor, subTextColor, borderColor),
-                const SizedBox(height: 24),
+                _buildQuickStatsOverview(context, user, cardBg, textColor, subTextColor, borderColor, screenWidth, screenHeight),
+                SizedBox(height: sectionGap),
 
                 // -------------------------------------------------------------
                 // UI SECTION 4: Account & Service Options
                 // -------------------------------------------------------------
-                _buildSectionHeader('Account & Services'),
-                const SizedBox(height: 8),
+                _buildSectionHeader('Account & Services', screenWidth),
+                SizedBox(height: screenHeight * 0.01),
 
                 _buildProfileOption(
                   icon: Icons.person_outline,
@@ -116,6 +121,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   textColor: textColor,
                   subTextColor: subTextColor,
                   borderColor: borderColor,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
                   onTap: () {
                     if (user != null) {
                       Navigator.push(
@@ -138,6 +145,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   textColor: textColor,
                   subTextColor: subTextColor,
                   borderColor: borderColor,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
                   onTap: () {
                     Navigator.push(
                       context,
@@ -148,71 +157,66 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   },
                 ),
 
-                // _buildProfileOption(
-                //   icon: Icons.architecture_outlined,
-                //   title: 'Explore House Plans',
-                //   subtitle: 'Browse 2D/3D floor plans and cost estimates',
-                //   cardBg: cardBg,
-                //   textColor: textColor,
-                //   subTextColor: subTextColor,
-                //   borderColor: borderColor,
-                //   onTap: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) => const HousePlansScreen(),
-                //       ),
-                //     );
-                //   },
-                // ),
+                _buildProfileOption(
+                  icon: Icons.architecture_outlined,
+                  title: 'Explore House Plans',
+                  subtitle: 'Browse 2D/3D floor plans and cost estimates',
+                  cardBg: cardBg,
+                  textColor: textColor,
+                  subTextColor: subTextColor,
+                  borderColor: borderColor,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HousePlansScreen(),
+                      ),
+                    );
+                  },
+                ),
 
-                // _buildProfileOption(
-                //   icon: Icons.business_outlined,
-                //   title: 'Construction Companies',
-                //   subtitle: 'Find verified contractors and builders',
-                //   cardBg: cardBg,
-                //   textColor: textColor,
-                //   subTextColor: subTextColor,
-                //   borderColor: borderColor,
-                //   onTap: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) => const UserCompaniesScreen(),
-                //       ),
-                //     );
-                //   },
-                // ),
+                _buildProfileOption(
+                  icon: Icons.business_outlined,
+                  title: 'Construction Companies',
+                  subtitle: 'Find verified contractors and builders',
+                  cardBg: cardBg,
+                  textColor: textColor,
+                  subTextColor: subTextColor,
+                  borderColor: borderColor,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const UserCompaniesScreen(),
+                      ),
+                    );
+                  },
+                ),
 
                 _buildProfileOption(
                   icon: Icons.lock_reset_outlined,
                   title: 'Change Password',
-                  subtitle: 'Update your account password securely',
+                  subtitle: 'Send password reset link to your email',
                   cardBg: cardBg,
                   textColor: textColor,
                   subTextColor: subTextColor,
                   borderColor: borderColor,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
                   onTap: () => _handlePasswordReset(user),
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: sectionGap),
 
                 // -------------------------------------------------------------
                 // UI SECTION 5: Preferences & Settings
                 // -------------------------------------------------------------
-                _buildSectionHeader('Preferences & Settings'),
-                const SizedBox(height: 8),
-
-                _buildProfileOption(
-                  icon: Icons.notifications_none_outlined,
-                  title: 'Notification Preferences',
-                  subtitle: 'Manage alerts, booking updates & emails',
-                  cardBg: cardBg,
-                  textColor: textColor,
-                  subTextColor: subTextColor,
-                  borderColor: borderColor,
-                  onTap: _showNotificationPreferencesBottomSheet,
-                ),
+                _buildSectionHeader('Preferences & Settings', screenWidth),
+                SizedBox(height: screenHeight * 0.01),
 
                 _buildProfileOption(
                   icon: Icons.palette_outlined,
@@ -222,16 +226,18 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   textColor: textColor,
                   subTextColor: subTextColor,
                   borderColor: borderColor,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
                   onTap: _showThemeSelectionDialog,
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: sectionGap),
 
                 // -------------------------------------------------------------
                 // UI SECTION 6: Support & Information
                 // -------------------------------------------------------------
-                _buildSectionHeader('Support & Legal'),
-                const SizedBox(height: 8),
+                _buildSectionHeader('Support & Legal', screenWidth),
+                SizedBox(height: screenHeight * 0.01),
 
                 _buildProfileOption(
                   icon: Icons.help_outline,
@@ -241,6 +247,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   textColor: textColor,
                   subTextColor: subTextColor,
                   borderColor: borderColor,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
                   onTap: _showHelpSupportDialog,
                 ),
 
@@ -252,6 +260,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   textColor: textColor,
                   subTextColor: subTextColor,
                   borderColor: borderColor,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
                   onTap: _showPrivacyPolicyDialog,
                 ),
 
@@ -263,37 +273,39 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   textColor: textColor,
                   subTextColor: subTextColor,
                   borderColor: borderColor,
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
                   onTap: _showAboutDialog,
                 ),
 
-                const SizedBox(height: 28),
+                SizedBox(height: sectionGap * 1.2),
 
                 // -------------------------------------------------------------
                 // UI SECTION 7: Session Sign-Out Button
                 // -------------------------------------------------------------
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: buttonHeight,
                   child: OutlinedButton.icon(
                     onPressed: () => _confirmSignOut(context),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.statusDanger,
                       side: const BorderSide(color: AppColors.statusDanger),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
                       ),
                     ),
-                    icon: const Icon(Icons.logout, size: 18),
+                    icon: Icon(Icons.logout, size: screenWidth * 0.045),
                     label: Text(
                       'Log Out',
                       style: GoogleFonts.poppins(
-                        fontSize: 14,
+                        fontSize: screenWidth * 0.036,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: screenHeight * 0.02),
               ],
             ),
           ),
@@ -303,10 +315,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // UI COMPONENT BUILDERS
+  // UI COMPONENT BUILDERS (WITH MEDIAQUERY RESPONSIVE DIMENSIONS)
   // ---------------------------------------------------------------------------
 
-  /// Renders user profile summary card containing photo, name, email, phone, role, & edit shortcut.
+  /// Renders user profile summary card using MediaQuery calculated dimensions.
   Widget _buildProfileHeaderCard(
     BuildContext context,
     UserModel? user,
@@ -314,17 +326,21 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     Color textColor,
     Color subTextColor,
     Color borderColor,
+    double screenWidth,
+    double screenHeight,
   ) {
     final String fullName = (user?.fullName.isNotEmpty == true) ? user!.fullName : 'Rahul Nair';
     final String email = (user?.email.isNotEmpty == true) ? user!.email : 'rahul.nair@example.com';
     final String phone = (user?.phoneNumber.isNotEmpty == true) ? user!.phoneNumber : 'Add phone number';
     final String role = (user?.role.isNotEmpty == true) ? user!.role : 'customer';
 
+    final avatarRadius = screenWidth * 0.09; // ~36dp on standard mobile screens
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(screenWidth * 0.04),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(screenWidth * 0.05),
         border: Border.all(color: borderColor),
         boxShadow: const [
           BoxShadow(
@@ -338,53 +354,53 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         children: [
           Row(
             children: [
-              GestureDetector(
-                onTap: () {
-                  if (user != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditUserProfileScreen(user: user),
-                      ),
-                    );
-                  }
-                },
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 36,
-                      backgroundColor: AppColors.surfaceLight,
-                      backgroundImage: (user?.profileImageUrl != null && user!.profileImageUrl.isNotEmpty)
-                          ? NetworkImage(user.profileImageUrl) as ImageProvider
-                          : null,
-                      child: (user?.profileImageUrl == null || user!.profileImageUrl.isEmpty)
-                          ? Text(
-                              fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U',
-                              style: GoogleFonts.poppins(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
-                              ),
-                            )
-                          : null,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: avatarRadius,
+                    backgroundColor: AppColors.surfaceLight,
+                    backgroundImage: (user?.profileImageUrl != null && user!.profileImageUrl.isNotEmpty)
+                        ? NetworkImage(user.profileImageUrl) as ImageProvider
+                        : null,
+                    child: (user?.profileImageUrl == null || user!.profileImageUrl.isEmpty)
+                        ? Text(
+                            fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U',
+                            style: GoogleFonts.poppins(
+                              fontSize: avatarRadius * 0.75,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
+                          )
+                        : null,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: InkWell(
+                      onTap: () {
+                        if (user != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditUserProfileScreen(user: user),
+                            ),
+                          );
+                        }
+                      },
                       child: Container(
-                        padding: const EdgeInsets.all(5),
+                        padding: EdgeInsets.all(screenWidth * 0.012),
                         decoration: BoxDecoration(
                           color: AppColors.primary,
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 2),
                         ),
-                        child: const Icon(Icons.camera_alt, size: 12, color: Colors.white),
+                        child: Icon(Icons.edit, size: screenWidth * 0.032, color: Colors.white),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: screenWidth * 0.035),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,44 +408,45 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     Text(
                       fullName,
                       style: GoogleFonts.poppins(
-                        fontSize: 17,
+                        fontSize: screenWidth * 0.042,
                         fontWeight: FontWeight.bold,
                         color: textColor,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: screenHeight * 0.003),
                     Text(
                       email,
                       style: GoogleFonts.poppins(
-                        fontSize: 12,
+                        fontSize: screenWidth * 0.03,
                         color: subTextColor,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: screenHeight * 0.003),
                     Row(
                       children: [
-                        Icon(Icons.phone_outlined, size: 12, color: subTextColor),
-                        const SizedBox(width: 4),
+                        Icon(Icons.phone_outlined, size: screenWidth * 0.032, color: subTextColor),
+                        SizedBox(width: screenWidth * 0.01),
                         Text(
                           phone,
                           style: GoogleFonts.poppins(
-                            fontSize: 11,
+                            fontSize: screenWidth * 0.028,
                             color: subTextColor,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: screenHeight * 0.008),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.025, vertical: screenHeight * 0.004),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(10),
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.025),
                       ),
                       child: Text(
                         role.toUpperCase(),
                         style: GoogleFonts.poppins(
-                          fontSize: 10,
+                          fontSize: screenWidth * 0.026,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary,
                         ),
@@ -445,8 +462,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  /// Renders a completeness progress indicator bar based on user fields populated.
-  Widget _buildProfileCompletenessBanner(UserModel? user, Color cardBg, Color textColor, Color borderColor) {
+  /// Renders profile completeness progress bar using MediaQuery sizing.
+  Widget _buildProfileCompletenessBanner(
+    UserModel? user,
+    Color cardBg,
+    Color textColor,
+    Color borderColor,
+    double screenWidth,
+    double screenHeight,
+  ) {
     int score = 0;
     if (user != null) {
       if (user.fullName.isNotEmpty) score += 25;
@@ -458,10 +482,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.035, vertical: screenHeight * 0.014),
       decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(screenWidth * 0.03),
         border: Border.all(color: borderColor),
       ),
       child: Column(
@@ -473,7 +497,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               Text(
                 'Profile Completion',
                 style: GoogleFonts.poppins(
-                  fontSize: 12,
+                  fontSize: screenWidth * 0.032,
                   fontWeight: FontWeight.w600,
                   color: textColor,
                 ),
@@ -481,14 +505,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               Text(
                 '$score%',
                 style: GoogleFonts.poppins(
-                  fontSize: 12,
+                  fontSize: screenWidth * 0.032,
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: screenHeight * 0.008),
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
@@ -503,7 +527,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  /// Renders horizontal grid cards showing real-time booking statistics and feature shortcuts.
+  /// Renders quick statistics overview cards streaming active leads & plans.
   Widget _buildQuickStatsOverview(
     BuildContext context,
     UserModel? user,
@@ -511,6 +535,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     Color textColor,
     Color subTextColor,
     Color borderColor,
+    double screenWidth,
+    double screenHeight,
   ) {
     return Row(
       children: [
@@ -528,6 +554,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 textColor: textColor,
                 subTextColor: subTextColor,
                 borderColor: borderColor,
+                screenWidth: screenWidth,
+                screenHeight: screenHeight,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -540,7 +568,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             },
           ),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: screenWidth * 0.025),
 
         // Card 2: House Plans Shortcut
         Expanded(
@@ -552,6 +580,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             textColor: textColor,
             subTextColor: subTextColor,
             borderColor: borderColor,
+            screenWidth: screenWidth,
+            screenHeight: screenHeight,
             onTap: () {
               Navigator.push(
                 context,
@@ -562,7 +592,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             },
           ),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: screenWidth * 0.025),
 
         // Card 3: Contractors Shortcut
         Expanded(
@@ -574,6 +604,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             textColor: textColor,
             subTextColor: subTextColor,
             borderColor: borderColor,
+            screenWidth: screenWidth,
+            screenHeight: screenHeight,
             onTap: () {
               Navigator.push(
                 context,
@@ -588,7 +620,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  /// Helper builder for individual statistics overview cards.
+  /// Helper builder for individual statistics overview cards with MediaQuery sizing.
   Widget _buildStatCard({
     required IconData icon,
     required String value,
@@ -597,16 +629,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     required Color textColor,
     required Color subTextColor,
     required Color borderColor,
+    required double screenWidth,
+    required double screenHeight,
     required VoidCallback onTap,
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(screenWidth * 0.035),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+        padding: EdgeInsets.symmetric(
+            vertical: screenHeight * 0.016, horizontal: screenWidth * 0.025),
         decoration: BoxDecoration(
           color: cardBg,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(screenWidth * 0.035),
           border: Border.all(color: borderColor),
           boxShadow: const [
             BoxShadow(
@@ -618,21 +653,21 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
         child: Column(
           children: [
-            Icon(icon, color: AppColors.primary, size: 22),
-            const SizedBox(height: 6),
+            Icon(icon, color: AppColors.primary, size: screenWidth * 0.055),
+            SizedBox(height: screenHeight * 0.008),
             Text(
               value,
               style: GoogleFonts.poppins(
-                fontSize: 14,
+                fontSize: screenWidth * 0.035,
                 fontWeight: FontWeight.bold,
                 color: textColor,
               ),
             ),
-            const SizedBox(height: 2),
+            SizedBox(height: screenHeight * 0.003),
             Text(
               label,
               style: GoogleFonts.poppins(
-                fontSize: 10,
+                fontSize: screenWidth * 0.026,
                 color: subTextColor,
               ),
               textAlign: TextAlign.center,
@@ -643,12 +678,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  /// Renders a section header label for profile groupings.
-  Widget _buildSectionHeader(String title) {
+  /// Renders section header text scaled with MediaQuery.
+  Widget _buildSectionHeader(String title, double screenWidth) {
     return Text(
       title,
       style: GoogleFonts.poppins(
-        fontSize: 14,
+        fontSize: screenWidth * 0.036,
         fontWeight: FontWeight.bold,
         color: AppColors.primary,
         letterSpacing: 0.3,
@@ -656,7 +691,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  /// Renders a custom styled tile option item with icon, title, subtitle, and chevron.
+  /// Renders custom styled option tile with MediaQuery responsive dimensions.
   Widget _buildProfileOption({
     required IconData icon,
     required String title,
@@ -665,29 +700,32 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     required Color textColor,
     required Color subTextColor,
     required Color borderColor,
+    required double screenWidth,
+    required double screenHeight,
     required VoidCallback onTap,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(bottom: screenHeight * 0.012),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(screenWidth * 0.03),
         border: Border.all(color: borderColor),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+        contentPadding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.04, vertical: screenHeight * 0.002),
         leading: Container(
-          padding: const EdgeInsets.all(8),
+          padding: EdgeInsets.all(screenWidth * 0.02),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10),
+            color: AppColors.surfaceLight,
+            borderRadius: BorderRadius.circular(screenWidth * 0.025),
           ),
-          child: Icon(icon, color: AppColors.primary, size: 20),
+          child: Icon(icon, color: AppColors.primary, size: screenWidth * 0.05),
         ),
         title: Text(
           title,
           style: GoogleFonts.poppins(
-            fontSize: 13,
+            fontSize: screenWidth * 0.032,
             fontWeight: FontWeight.w600,
             color: textColor,
           ),
@@ -696,7 +734,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ? Text(
                 subtitle,
                 style: GoogleFonts.poppins(
-                  fontSize: 11,
+                  fontSize: screenWidth * 0.027,
                   color: subTextColor,
                 ),
               )
@@ -704,7 +742,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         trailing: Icon(
           Icons.chevron_right,
           color: subTextColor,
-          size: 20,
+          size: screenWidth * 0.05,
         ),
         onTap: onTap,
       ),
@@ -715,8 +753,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   // INTERACTIVE FEATURE HANDLERS & MODALS
   // ---------------------------------------------------------------------------
 
-  /// Displays Change Password dialog allowing users to update their password
-  /// directly or send a password reset email.
+  /// Displays Change Password dialog.
   Future<void> _handlePasswordReset(UserModel? user) async {
     final email = user?.email ?? '';
     if (email.isEmpty) {
@@ -791,7 +828,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         style: GoogleFonts.poppins(fontSize: 13),
                         validator: (val) => (val == null || val.isEmpty) ? 'Enter current password' : null,
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock_outline, size: 18, color: AppColors.textSecondary),
+                          prefixIcon: Icon(Icons.lock_outline, size: 18, color: AppColors.textSecondary),
                           suffixIcon: IconButton(
                             icon: Icon(obscureCurrent ? Icons.visibility_off : Icons.visibility, size: 18),
                             onPressed: () => setModalState(() => obscureCurrent = !obscureCurrent),
@@ -815,7 +852,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.key, size: 18, color: AppColors.textSecondary),
+                          prefixIcon: Icon(Icons.key, size: 18, color: AppColors.textSecondary),
                           suffixIcon: IconButton(
                             icon: Icon(obscureNew ? Icons.visibility_off : Icons.visibility, size: 18),
                             onPressed: () => setModalState(() => obscureNew = !obscureNew),
@@ -839,7 +876,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.check_circle_outline, size: 18, color: AppColors.textSecondary),
+                          prefixIcon: Icon(Icons.check_circle_outline, size: 18, color: AppColors.textSecondary),
                           suffixIcon: IconButton(
                             icon: Icon(obscureConfirm ? Icons.visibility_off : Icons.visibility, size: 18),
                             onPressed: () => setModalState(() => obscureConfirm = !obscureConfirm),
@@ -930,119 +967,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  /// Displays interactive bottom sheet for managing Notification Preferences.
-  void _showNotificationPreferencesBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: AppColors.borderLight,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Notification Preferences',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Choose which notifications you wish to receive',
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SwitchListTile(
-                    title: Text('Push Notifications', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w500)),
-                    subtitle: Text('Receive system and app activity alerts', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
-                    value: _pushNotifications,
-                    onChanged: (val) {
-                      setState(() => _pushNotifications = val);
-                      setModalState(() {});
-                    },
-                  ),
-                  SwitchListTile(
-                    title: Text('Booking Status Updates', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w500)),
-                    subtitle: Text('Real-time alerts when bookings change', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
-                    value: _bookingAlerts,
-                    onChanged: (val) {
-                      setState(() => _bookingAlerts = val);
-                      setModalState(() {});
-                    },
-                  ),
-                  SwitchListTile(
-                    title: Text('Promotional & Construction Offers', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w500)),
-                    subtitle: Text('Discounts on house plans & company deals', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
-                    value: _promotionalOffers,
-                    onChanged: (val) {
-                      setState(() => _promotionalOffers = val);
-                      setModalState(() {});
-                    },
-                  ),
-                  SwitchListTile(
-                    title: Text('Email Summaries', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w500)),
-                    subtitle: Text('Monthly digest of saved plans & updates', style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textSecondary)),
-                    value: _emailUpdates,
-                    onChanged: (val) {
-                      setState(() => _emailUpdates = val);
-                      setModalState(() {});
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 46,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _showSnackBar('Notification preferences saved successfully!');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text(
-                        'Save Preferences',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+
 
   /// Displays Theme selection dialog.
   void _showThemeSelectionDialog() {
@@ -1069,7 +994,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 trailing: isSelected
                     ? const Icon(Icons.check_circle, color: AppColors.primary, size: 20)
-                    : const Icon(Icons.circle_outlined, color: AppColors.borderLight, size: 20),
+                    : Icon(Icons.circle_outlined, color: AppColors.borderLight, size: 20),
                 onTap: () {
                   AppSettings().setTheme(option);
                   setState(() => _selectedTheme = option);
@@ -1115,7 +1040,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       children: [
                         const Icon(Icons.email, size: 16, color: AppColors.primary),
                         const SizedBox(width: 8),
-                        Text('support@constructa.app', style: GoogleFonts.poppins(fontSize: 12)),
+                        Text('support@constructa.app', style: GoogleFonts.poppins(fontSize: w*0.03)),
                       ],
                     ),
                     const SizedBox(height: 6),
@@ -1313,7 +1238,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Future<void> _confirmSignOut(BuildContext context) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         title: Text(
           'Sign Out',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16),
@@ -1324,14 +1249,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(ctx, false),
             child: Text(
               'Cancel',
               style: GoogleFonts.poppins(color: AppColors.textSecondary),
             ),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.statusDanger,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

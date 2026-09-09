@@ -69,7 +69,7 @@ class AdminBookingsScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            decoration: const BoxDecoration(
+            decoration:  BoxDecoration(
               color: AppColors.surfaceLight,
               borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
             ),
@@ -98,7 +98,7 @@ class AdminBookingsScreen extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-      decoration: const BoxDecoration(
+      decoration:  BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.borderLight, width: 0.5)),
       ),
       child: Row(

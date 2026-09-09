@@ -129,38 +129,52 @@ class _AddEditProjectScreenState extends State<AddEditProjectScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // MediaQuery Responsive Dimension Calculations
+    final screenSize = MediaQuery.of(context).size;
+    final w = screenSize.width;
+    final h = screenSize.height;
+
+    final double hPadding = w * 0.04; // 4% width
+    final double vPadding = h * 0.02; // 2% height
+    final double fieldGap = h * 0.018; // 1.8% height
+    final double titleFontSize = w * 0.033; // ~13.2pt
+    final double inputFontSize = w * 0.036; // ~14.4pt
+    final double buttonHeight = h * 0.06; // 6% height
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.cardBackground,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: AppColors.textPrimary, size: w * 0.06),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           widget.project == null ? 'Add Showcase Project' : 'Edit Showcase Project',
-          style: GoogleFonts.poppins(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 17),
+          style: GoogleFonts.poppins(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: w * 0.043),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: EdgeInsets.fromLTRB(hPadding, vPadding, hPadding, h * 0.04),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Project Title', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-            const SizedBox(height: 4),
+            Text('Project Title', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+            SizedBox(height: h * 0.006),
             TextField(
               controller: _titleController,
-              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(fontSize: inputFontSize, color: AppColors.textPrimary),
               decoration: InputDecoration(
                 hintText: 'e.g. Kochi Waterfront Villa',
                 filled: true,
                 fillColor: AppColors.cardBackground,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                contentPadding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
               ),
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: fieldGap),
 
             Row(
               children: [
@@ -168,36 +182,38 @@ class _AddEditProjectScreenState extends State<AddEditProjectScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Category', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-                      const SizedBox(height: 4),
+                      Text('Category', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                      SizedBox(height: h * 0.006),
                       TextField(
                         controller: _categoryController,
-                        style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+                        style: GoogleFonts.poppins(fontSize: inputFontSize, color: AppColors.textPrimary),
                         decoration: InputDecoration(
                           hintText: 'Construction',
                           filled: true,
                           fillColor: AppColors.cardBackground,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                          contentPadding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: w * 0.03),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Completion Date', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-                      const SizedBox(height: 4),
+                      Text('Completion Date', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                      SizedBox(height: h * 0.006),
                       TextField(
                         controller: _completionDateController,
-                        style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+                        style: GoogleFonts.poppins(fontSize: inputFontSize, color: AppColors.textPrimary),
                         decoration: InputDecoration(
                           hintText: 'May 2026',
                           filled: true,
                           fillColor: AppColors.cardBackground,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                          contentPadding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
                         ),
                       ),
                     ],
@@ -205,85 +221,107 @@ class _AddEditProjectScreenState extends State<AddEditProjectScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: fieldGap),
 
-            Text('Site Location', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-            const SizedBox(height: 4),
+            Text('Site Location', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+            SizedBox(height: h * 0.006),
             TextField(
               controller: _locationController,
-              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(fontSize: inputFontSize, color: AppColors.textPrimary),
               decoration: InputDecoration(
                 hintText: 'Kochi, Kerala',
                 filled: true,
                 fillColor: AppColors.cardBackground,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                contentPadding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: fieldGap),
 
             // Multi-Image Picker Field
-            MultiImagePickerField(
-              title: 'Project Photos & Engineering Designs',
-              subtitle: 'Upload site pictures, interiors, elevations & finished views. Compressed to ≤ 3MB.',
-              initialUrls: _existingImageUrls,
-              initialFiles: _newImageFiles,
-              onChanged: (existing, newFiles) {
-                _existingImageUrls = existing;
-                _newImageFiles = newFiles;
-              },
+            SizedBox(
+              width: w,
+              child: MultiImagePickerField(
+                title: 'Project Photos & Designs',
+                subtitle: 'Upload site pictures, interiors, elevations & finished views. Compressed to ≤ 3MB.',
+                initialUrls: _existingImageUrls,
+                initialFiles: _newImageFiles,
+                onChanged: (existing, newFiles) {
+                  _existingImageUrls = existing;
+                  _newImageFiles = newFiles;
+                },
+              ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: fieldGap),
 
-            Text('Project Details & Engineering Highlights', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-            const SizedBox(height: 4),
+            Text('Project Details & Engineering Highlights', style: GoogleFonts.poppins(fontSize: titleFontSize, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+            SizedBox(height: h * 0.006),
             TextField(
               controller: _descriptionController,
               maxLines: 3,
-              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(fontSize: inputFontSize, color: AppColors.textPrimary),
               decoration: InputDecoration(
                 hintText: 'Completed 3400 sq.ft ultra-modern villa with custom piles and anti-humidity waterproofing...',
                 filled: true,
                 fillColor: AppColors.cardBackground,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.borderLight)),
+                contentPadding: EdgeInsets.symmetric(horizontal: w * 0.035, vertical: h * 0.015),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(w * 0.03), borderSide: BorderSide(color: AppColors.borderLight)),
               ),
             ),
-            const SizedBox(height: 24),
-
-            // Upload Status text if loading
-            if (_isLoading && _uploadStatus.isNotEmpty) ...[
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
+            SizedBox(height: fieldGap),
+          ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: hPadding, vertical: h * 0.018),
+          decoration:  BoxDecoration(
+            color: AppColors.cardBackground,
+            border: Border(top: BorderSide(color: AppColors.borderLight, width: 1.0)),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadowColor,
+                blurRadius: 8,
+                offset: Offset(0, -2),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_isLoading && _uploadStatus.isNotEmpty) ...[
+                Padding(
+                  padding: EdgeInsets.only(bottom: h * 0.01),
                   child: Text(
                     _uploadStatus,
-                    style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.secondary),
+                    style: GoogleFonts.poppins(fontSize: w * 0.03, fontWeight: FontWeight.w500, color: AppColors.secondary),
+                    textAlign: TextAlign.center,
                   ),
+                ),
+              ],
+              SizedBox(
+                width: double.infinity,
+                height: buttonHeight,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _saveProject,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.secondary,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(w * 0.03)),
+                  ),
+                  child: _isLoading
+                      ? SizedBox(
+                          height: w * 0.05,
+                          width: w * 0.05,
+                          child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        )
+                      : Text(
+                          widget.project == null ? 'Publish Showcase Project' : 'Save Project Changes',
+                          style: GoogleFonts.poppins(fontSize: w * 0.038, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
                 ),
               ),
             ],
-
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _saveProject,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                      )
-                    : Text(
-                        widget.project == null ? 'Publish Showcase Project' : 'Save Project Changes',
-                        style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

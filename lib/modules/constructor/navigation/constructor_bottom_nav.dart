@@ -33,9 +33,11 @@ class _ConstructorMainNavigationShellState
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (_selectedIndex != index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -43,41 +45,62 @@ class _ConstructorMainNavigationShellState
     initScreenSize(context);
 
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 350),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        transitionBuilder: (child, animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.98, end: 1.0).animate(animation),
+              child: child,
+            ),
+          );
+        },
+        child: KeyedSubtree(
+          key: ValueKey<int>(_selectedIndex),
+          child: _screens[_selectedIndex],
+        ),
       ),
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.cardBackground,
+        decoration: BoxDecoration(
+          color: AppColors.getCardBackground(context),
           border: Border(
-            top: BorderSide(color: AppColors.borderLight, width: 1.0),
+            top: BorderSide(color: AppColors.getBorderLight(context), width: 1.0),
           ),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.shadowColor,
+              blurRadius: 8,
+              offset: Offset(0, -2),
+            ),
+          ],
         ),
         child: NavigationBar(
           selectedIndex: _selectedIndex,
           onDestinationSelected: _onItemTapped,
-          indicatorColor: AppColors.surfaceLight,
-          backgroundColor: AppColors.cardBackground,
+          indicatorColor: AppColors.getSurfaceLight(context),
+          backgroundColor: AppColors.getCardBackground(context),
           elevation: 0,
-          destinations: const [
-            NavigationDestination(
+          destinations: [
+            const NavigationDestination(
               icon: Icon(Icons.dashboard_outlined),
               selectedIcon: Icon(Icons.dashboard, color: AppColors.secondary),
               label: 'Dashboard',
             ),
-            NavigationDestination(
+            const NavigationDestination(
               icon: Icon(Icons.architecture_outlined),
               selectedIcon:
                   Icon(Icons.architecture, color: AppColors.secondary),
-              label: 'Projects',
+              label: 'Plans',
             ),
-            NavigationDestination(
+            const NavigationDestination(
               icon: Icon(Icons.assignment_outlined),
               selectedIcon: Icon(Icons.assignment, color: AppColors.secondary),
               label: 'Bookings',
             ),
-            NavigationDestination(
+            const NavigationDestination(
               icon: Icon(Icons.storefront_outlined),
               selectedIcon: Icon(Icons.storefront, color: AppColors.secondary),
               label: 'Profile',

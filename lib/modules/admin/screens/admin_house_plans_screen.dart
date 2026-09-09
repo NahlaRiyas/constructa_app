@@ -70,13 +70,13 @@ class AdminHousePlansScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            decoration: const BoxDecoration(
+            decoration:  BoxDecoration(
               color: AppColors.surfaceLight,
               borderRadius: BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
             ),
             child: Row(
               children: [
-                const SizedBox(width: 60, child: Text('Image', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondary))),
+                 SizedBox(width: 60, child: Text('Image', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondary))),
                 const SizedBox(width: 12),
                 Expanded(flex: 2, child: Text('Plan Title', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondary))),
                 Expanded(child: Text('Company', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textSecondary))),
@@ -104,7 +104,7 @@ class AdminHousePlansScreen extends StatelessWidget {
       onTap: () => _showPlanDetailsDialog(context, plan),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: const BoxDecoration(
+        decoration:  BoxDecoration(
           border: Border(bottom: BorderSide(color: AppColors.borderLight, width: 0.5)),
         ),
         child: Row(

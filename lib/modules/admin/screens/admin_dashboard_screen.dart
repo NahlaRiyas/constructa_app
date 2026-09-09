@@ -210,7 +210,7 @@ class AdminDashboardScreen extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-      decoration: const BoxDecoration(
+      decoration:  BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.borderLight, width: 0.5)),
       ),
       child: Row(

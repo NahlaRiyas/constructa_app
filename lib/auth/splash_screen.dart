@@ -3,6 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/palette.dart';
 
+/// ============================================================================
+/// FILE: splash_screen.dart
+/// MODULE: Authentication & Welcome Flow (Splash UI Layer)
+/// PROJECT: Constructa App - College Project
+/// DESCRIPTION:
+///   Standardized, high-production splash screen featuring brand gradient,
+///   pulsing ambient aura, rotated logo card cluster, progress indicator,
+///   and smooth auto-navigation to the Onboarding Screen.
+/// ============================================================================
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -10,61 +20,259 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
-  Timer? _timer;
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _entranceController;
+  late AnimationController _pulseController;
+
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _pulseAnimation;
+
+  Timer? _navigationTimer;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(seconds: 2), () {
+
+    // 1. Entrance Animations Controller (1.5 seconds duration)
+    _entranceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.4, end: 1.0).animate(
+      CurvedAnimation(
+          parent: _entranceController, curve: Curves.easeOutBack),
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _entranceController, curve: Curves.easeIn),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.25),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+          parent: _entranceController, curve: Curves.easeOutCubic),
+    );
+
+    // 2. Ambient Pulse Loop Controller (2.0 seconds reverse loop)
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat(reverse: true);
+
+    _pulseAnimation = Tween<double>(begin: 0.9, end: 1.12).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
+    _entranceController.forward();
+
+    // Navigate to Onboarding Screen after 2.8s
+    _navigationTimer = Timer(const Duration(milliseconds: 2800), () {
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/onboarding');
       }
     });
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _navigationTimer?.cancel();
+    _entranceController.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final w = size.width;
+    final h = size.height;
+
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF001233), // Deep Navy Midnight
+              Color(0xFF003178), // Primary Brand Blue
+              Color(0xFF002255), // Dark Blue Base
+            ],
+            stops: [0.0, 0.55, 1.0],
+          ),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.construction,
-                size: 48,
-                color: AppColors.primary,
+            // -----------------------------------------------------------------
+            // LAYER 1: Ambient Pulse Glow Circle
+            // -----------------------------------------------------------------
+            ScaleTransition(
+              scale: _pulseAnimation,
+              child: Container(
+                width: w * 0.72,
+                height: w * 0.72,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.04),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.lightBlueAccent.withValues(alpha: 0.08),
+                      blurRadius: 60,
+                      spreadRadius: 20,
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 24),
-            Text(
-              'CONSTRUCTA',
-              style: GoogleFonts.poppins(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 3,
-                color: AppColors.textLight,
+
+            // -----------------------------------------------------------------
+            // LAYER 2: Main Brand Logo Cluster & Typography
+            // -----------------------------------------------------------------
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Layered Rotated Architectural Logo Card
+                    ScaleTransition(
+                      scale: _scaleAnimation,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Rotated Accent Backdrop Square
+                          Transform.rotate(
+                            angle: 0.12,
+                            child: Container(
+                              width: w * 0.23,
+                              height: w * 0.23,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(w * 0.06),
+                              ),
+                            ),
+                          ),
+                          // Main White Logo Card
+                          Container(
+                            width: w * 0.22,
+                            height: w * 0.22,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(w * 0.055),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.8),
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.3),
+                                  blurRadius: 24,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.home_work_rounded,
+                                size: w * 0.12,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: h * 0.04),
+
+                    // App Title with Letter Spacing
+                    Text(
+                      'CONSTRUCTA',
+                      style: GoogleFonts.poppins(
+                        fontSize: w * 0.085,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 5.0,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: h * 0.012),
+
+                    // Subtitle Badge Container
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: w * 0.04, vertical: h * 0.008),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(w * 0.05),
+                        border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.2)),
+                      ),
+                      child: Text(
+                        'DIGITAL ARCHITECTURE & CONTRACTOR PLATFORM',
+                        style: GoogleFonts.poppins(
+                          fontSize: w * 0.025,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.2,
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: h * 0.06),
+
+                    // Loading Progress Indicator
+                    SizedBox(
+                      width: w * 0.38,
+                      height: 4,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(2),
+                        child: LinearProgressIndicator(
+                          backgroundColor: Colors.white.withValues(alpha: 0.18),
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Builder & Contractor Booking System',
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                color: AppColors.onPrimaryContainer,
+
+            // -----------------------------------------------------------------
+            // LAYER 3: Footer Brand Tagline
+            // -----------------------------------------------------------------
+            Positioned(
+              bottom: h * 0.04,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: Column(
+                  children: [
+                    Text(
+                      'v1.0.0 • POWERED BY CONSTRUCTA ENGINE',
+                      style: GoogleFonts.poppins(
+                        fontSize: w * 0.026,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.8,
+                        color: Colors.white.withValues(alpha: 0.65),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

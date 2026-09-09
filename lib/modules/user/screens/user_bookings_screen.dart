@@ -7,6 +7,10 @@ import '../../../core/models/booking_model.dart';
 import '../../../core/services/booking_service.dart';
 import 'rate_review_screen.dart';
 
+/// UserBookingsScreen
+///
+/// Customer appointments, site visits, and consultation management screen.
+/// Employs MediaQuery throughout for responsive card sizing, padding, and font scaling.
 class UserBookingsScreen extends StatelessWidget {
   const UserBookingsScreen({super.key});
 
@@ -14,26 +18,44 @@ class UserBookingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
 
+    // MediaQuery Responsive Layout Sizing
+    final screenSize = MediaQuery.of(context).size;
+    final w = screenSize.width;
+    final h = screenSize.height;
+
+    final double hPadding = (w * 0.04).clamp(12.0, 24.0);
+    final double vPadding = (h * 0.018).clamp(10.0, 20.0);
+    final double appBarTitleFontSize = (w * 0.045).clamp(16.0, 22.0);
+    final double sectionHeaderFontSize = (w * 0.04).clamp(14.0, 18.0);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.getBackground(context),
       appBar: AppBar(
-        backgroundColor: AppColors.cardBackground,
+        backgroundColor: AppColors.getCardBackground(context),
         elevation: 0,
         title: Text(
           'My Bookings',
-          style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+          style: GoogleFonts.poppins(
+            fontSize: appBarTitleFontSize,
+            fontWeight: FontWeight.bold,
+            color: AppColors.getTextPrimary(context),
+          ),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.symmetric(horizontal: hPadding, vertical: vPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Active Consultations & Site Visits',
-              style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+              style: GoogleFonts.poppins(
+                fontSize: sectionHeaderFontSize,
+                fontWeight: FontWeight.bold,
+                color: AppColors.getTextPrimary(context),
+              ),
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: h * 0.015),
 
             StreamBuilder<List<BookingModel>>(
               stream: BookingService().getUserBookings(userId),
@@ -46,12 +68,15 @@ class UserBookingsScreen extends StatelessWidget {
                 if (bookings.isEmpty) {
                   return Center(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 40),
+                      padding: EdgeInsets.symmetric(vertical: h * 0.06),
                       child: Column(
                         children: [
-                          Icon(Icons.event_busy, size: 48, color: AppColors.textMuted),
-                          const SizedBox(height: 8),
-                          Text('No active bookings yet.', style: GoogleFonts.poppins(color: AppColors.textSecondary)),
+                          Icon(Icons.event_busy, size: (w * 0.12).clamp(36.0, 60.0), color: AppColors.textMuted),
+                          SizedBox(height: h * 0.01),
+                          Text(
+                            'No active bookings yet.',
+                            style: GoogleFonts.poppins(color: AppColors.getTextSecondary(context), fontSize: (w * 0.035).clamp(12.0, 16.0)),
+                          ),
                         ],
                       ),
                     ),
@@ -59,7 +84,11 @@ class UserBookingsScreen extends StatelessWidget {
                 }
 
                 return Column(
-                  children: bookings.map((b) => _buildBookingCard(context, b)).toList(),
+                  children: bookings.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final booking = entry.value;
+                    return _buildAnimatedBookingCard(context, booking, index, w, h);
+                  }).toList(),
                 );
               },
             ),
@@ -69,139 +98,194 @@ class UserBookingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBookingCard(BuildContext context, BookingModel booking) {
+  /// Renders booking card with entrance slide and fade animation using MediaQuery dimensions.
+  Widget _buildAnimatedBookingCard(
+      BuildContext context, BookingModel booking, int index, double w, double h) {
     Color statusColor = AppColors.statusPending;
     if (booking.status == 'Confirmed') statusColor = AppColors.statusSuccess;
     if (booking.status == 'Completed') statusColor = AppColors.primary;
     if (booking.status == 'Cancelled') statusColor = AppColors.statusDanger;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderLight),
-        boxShadow: const [
-          BoxShadow(color: AppColors.shadowColor, blurRadius: 8, offset: Offset(0, 4)),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  booking.companyName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  booking.status.toUpperCase(),
-                  style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: statusColor),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            booking.planTitle,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textSecondary),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              const Icon(Icons.calendar_month, size: 16, color: AppColors.primary),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  '${booking.bookingDate} at ${booking.timeSlot}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
-                ),
-              ),
-            ],
-          ),
-          if (booking.notes.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            Text('Notes: "${booking.notes}"', style: GoogleFonts.poppins(fontSize: 12, fontStyle: FontStyle.italic, color: AppColors.textSecondary)),
-          ],
-          const SizedBox(height: 16),
+    final double titleFontSize = (w * 0.038).clamp(13.0, 17.0);
+    final double subtitleFontSize = (w * 0.032).clamp(11.0, 14.0);
+    final double captionFontSize = (w * 0.028).clamp(10.0, 12.0);
+    final double borderRadius = (w * 0.04).clamp(12.0, 18.0);
+    final double buttonHeight = (h * 0.052).clamp(38.0, 48.0);
 
-          Row(
-            children: [
-              if (booking.userPhone.isNotEmpty) ...[
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      final uri = Uri.parse('tel:${booking.userPhone}');
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri);
-                      } else {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Could not launch phone dialer.')),
-                          );
-                        }
-                      }
-                    },
-                    icon: const Icon(Icons.phone, size: 16),
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      side: const BorderSide(color: AppColors.borderLight),
-                    ),
-                    label: Text('Contact', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textPrimary)),
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 300 + (index * 80)),
+      curve: Curves.easeOutCubic,
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, (1.0 - value) * 20),
+          child: Opacity(
+            opacity: value,
+            child: Container(
+              margin: EdgeInsets.only(bottom: h * 0.018),
+              padding: EdgeInsets.all(w * 0.04),
+              decoration: BoxDecoration(
+                color: AppColors.getCardBackground(context),
+                borderRadius: BorderRadius.circular(borderRadius),
+                border: Border.all(color: AppColors.getBorderLight(context)),
+                boxShadow: const [
+                  BoxShadow(
+                    color: AppColors.shadowColor,
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
                   ),
-                ),
-                const SizedBox(width: 10),
-              ],
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (booking.status == 'Completed') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RateReviewScreen(
-                            companyId: booking.companyId,
-                            companyName: booking.companyName,
-                            targetId: booking.companyId, // Default to company review from booking
-                            targetType: 'company',
-                            targetTitle: booking.companyName,
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          booking.companyName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                            fontSize: titleFontSize,
+                            color: AppColors.getTextPrimary(context),
                           ),
                         ),
-                      );
-                    } else if (booking.status == 'Pending' || booking.status == 'Confirmed') {
-                      _showCancelBookingDialog(context, booking);
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: booking.status == 'Completed' ? AppColors.primary : AppColors.statusDanger,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: w * 0.025, vertical: h * 0.005),
+                        decoration: BoxDecoration(
+                          color: statusColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(w * 0.05),
+                        ),
+                        child: Text(
+                          booking.status.toUpperCase(),
+                          style: GoogleFonts.poppins(
+                            fontSize: captionFontSize,
+                            fontWeight: FontWeight.bold,
+                            color: statusColor,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    booking.status == 'Completed' ? 'Rate Service' : 'Cancel Booking',
-                    style: GoogleFonts.poppins(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
+                  SizedBox(height: h * 0.008),
+                  Text(
+                    booking.planTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: subtitleFontSize,
+                      color: AppColors.getTextSecondary(context),
+                    ),
                   ),
-                ),
+                  SizedBox(height: h * 0.012),
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_month, size: (w * 0.04).clamp(14.0, 18.0), color: AppColors.primary),
+                      SizedBox(width: w * 0.015),
+                      Expanded(
+                        child: Text(
+                          '${booking.bookingDate} at ${booking.timeSlot}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                            fontSize: subtitleFontSize,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.getTextPrimary(context),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (booking.notes.isNotEmpty) ...[
+                    SizedBox(height: h * 0.008),
+                    Text(
+                      'Notes: "${booking.notes}"',
+                      style: GoogleFonts.poppins(
+                        fontSize: subtitleFontSize,
+                        fontStyle: FontStyle.italic,
+                        color: AppColors.getTextSecondary(context),
+                      ),
+                    ),
+                  ],
+                  SizedBox(height: h * 0.018),
+                  Row(
+                    children: [
+                      if (booking.userPhone.isNotEmpty) ...[
+                        Expanded(
+                          child: SizedBox(
+                            height: buttonHeight,
+                            child: OutlinedButton.icon(
+                              onPressed: () async {
+                                final uri = Uri.parse('tel:${booking.userPhone}');
+                                if (await canLaunchUrl(uri)) {
+                                  await launchUrl(uri);
+                                } else {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Could not launch phone dialer.')),
+                                    );
+                                  }
+                                }
+                              },
+                              icon: Icon(Icons.phone, size: (w * 0.04).clamp(14.0, 18.0)),
+                              style: OutlinedButton.styleFrom(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(w * 0.025)),
+                                side: BorderSide(color: AppColors.getBorderLight(context)),
+                              ),
+                              label: Text(
+                                'Contact',
+                                style: GoogleFonts.poppins(fontSize: subtitleFontSize, color: AppColors.getTextPrimary(context)),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: w * 0.025),
+                      ],
+                      Expanded(
+                        child: SizedBox(
+                          height: buttonHeight,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (booking.status == 'Completed') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RateReviewScreen(
+                                      companyId: booking.companyId,
+                                      companyName: booking.companyName,
+                                      targetId: booking.companyId,
+                                      targetType: 'company',
+                                      targetTitle: booking.companyName,
+                                    ),
+                                  ),
+                                );
+                              } else if (booking.status == 'Pending' || booking.status == 'Confirmed') {
+                                _showCancelBookingDialog(context, booking);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: booking.status == 'Completed' ? AppColors.primary : AppColors.statusDanger,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(w * 0.025)),
+                            ),
+                            child: Text(
+                              booking.status == 'Completed' ? 'Rate Service' : 'Cancel Booking',
+                              style: GoogleFonts.poppins(fontSize: subtitleFontSize, color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -212,12 +296,12 @@ class UserBookingsScreen extends StatelessWidget {
         title: Text('Cancel Booking', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
         content: Text(
           'Are you sure you want to cancel your booking with ${booking.companyName} for ${booking.planTitle}?',
-          style: GoogleFonts.poppins(fontSize: 14, color: AppColors.textSecondary),
+          style: GoogleFonts.poppins(fontSize: 14, color: AppColors.getTextSecondary(context)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Keep Booking', style: GoogleFonts.poppins(color: AppColors.textSecondary)),
+            child: Text('Keep Booking', style: GoogleFonts.poppins(color: AppColors.getTextSecondary(context))),
           ),
           TextButton(
             onPressed: () async {
@@ -229,7 +313,10 @@ class UserBookingsScreen extends StatelessWidget {
                 );
               }
             },
-            child: Text('Cancel Booking', style: GoogleFonts.poppins(color: AppColors.statusDanger, fontWeight: FontWeight.bold)),
+            child: Text(
+              'Cancel Booking',
+              style: GoogleFonts.poppins(color: AppColors.statusDanger, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),

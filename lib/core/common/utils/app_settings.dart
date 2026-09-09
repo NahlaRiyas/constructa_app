@@ -20,6 +20,15 @@ class AppSettings extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
   String get themeName => _themeName;
 
+  /// Returns whether dark mode is currently active based on explicit theme selection
+  /// or system platform brightness.
+  bool get isDarkMode {
+    if (_themeMode == ThemeMode.dark) return true;
+    if (_themeMode == ThemeMode.light) return false;
+    final dispatcher = WidgetsBinding.instance.platformDispatcher;
+    return dispatcher.platformBrightness == Brightness.dark;
+  }
+
   /// Sets active app theme mode and notifies global UI listeners.
   void setTheme(String name) {
     _themeName = name;
