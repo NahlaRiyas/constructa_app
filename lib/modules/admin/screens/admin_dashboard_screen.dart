@@ -209,7 +209,7 @@ class AdminDashboardScreen extends StatelessWidget {
     if (booking.status == 'Cancelled') statusColor = AppColors.statusDanger;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration:  BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.borderLight, width: 0.5)),
       ),
