@@ -161,7 +161,7 @@ class AdminHousePlansScreen extends StatelessWidget {
               child: Text('${plan.sqft}', style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textPrimary)),
             ),
             Expanded(
-              child: Text('₹${(plan.contractPrice / 100000).toStringAsFixed(1)}L', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary)),
+              child: Text('₹${(plan.contractPrice / 100000).toStringAsFixed(1)}L', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white)),
             ),
             Expanded(
               child: plan.tag.isNotEmpty
@@ -186,7 +186,7 @@ class AdminHousePlansScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.visibility_outlined, size: 19, color: AppColors.primary),
+                    icon: const Icon(Icons.visibility_outlined, size: 19, color: Colors.white),
                     onPressed: () => _showPlanDetailsDialog(context, plan),
                     tooltip: 'View Plan & Blueprints',
                   ),
@@ -302,11 +302,11 @@ class AdminHousePlansScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Text('${plan.bhk} • ${plan.sqft} sq.ft', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                            Text('${plan.bhk} • ${plan.sqft} sq.ft', style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
                             const Spacer(),
                             Text(
                               '₹${(plan.contractPrice / 100000).toStringAsFixed(2)} Lakhs',
-                              style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.primary),
+                              style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                             ),
                           ],
                         ),

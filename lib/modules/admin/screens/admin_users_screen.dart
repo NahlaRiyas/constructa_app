@@ -102,7 +102,7 @@ class AdminUsersScreen extends StatelessWidget {
   }
 
   Widget _buildUserRow(BuildContext context, UserModel user) {
-    final roleColor = user.role == 'company' ? AppColors.secondary : AppColors.primary;
+    final roleColor = user.role == 'company' ? AppColors.accentSky : AppColors.secondaryContainer;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       decoration:  BoxDecoration(

@@ -205,7 +205,7 @@ class AdminDashboardScreen extends StatelessWidget {
   Widget _buildBookingRow(BookingModel booking) {
     Color statusColor = AppColors.statusPending;
     if (booking.status == 'Confirmed') statusColor = AppColors.statusSuccess;
-    if (booking.status == 'Completed') statusColor = AppColors.primary;
+    if (booking.status == 'Completed') statusColor = AppColors.accentPurple;
     if (booking.status == 'Cancelled') statusColor = AppColors.statusDanger;
 
     return Container(
